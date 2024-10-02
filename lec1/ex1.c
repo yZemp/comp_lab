@@ -44,6 +44,7 @@ double exp_series(float x, int n) {
         g += int_power(x, i) / fact(i);
     }
     
+    return g;
 }
 
 double int_power(double x, int n) {

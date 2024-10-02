@@ -18,7 +18,7 @@ int main(int argc, char *argv[]) {
     float zt = 1;
 
     printf("Floats:");
-    printf("xt: %f\tyt: %f\tzt: %f", xt, yt, zt);
+    printf("xt: %f\tyt: %f\tzt: %f\n", xt, yt, zt);
 
     printf("(xt + yt) + zt\n");
     printf("%.16e\n", ((xt + yt) + zt));
@@ -36,7 +36,7 @@ int main(int argc, char *argv[]) {
     double zt1 = 1;
 
     printf("Doubles:");
-    printf("xt: %f\tyt: %f\tzt: %f", xt1, yt1, zt1);
+    printf("xt: %f\tyt: %f\tzt: %f\n", xt1, yt1, zt1);
 
     printf("(xt + yt) + zt\n");
     printf("%.16e\n", ((xt1 + yt1) + zt1));

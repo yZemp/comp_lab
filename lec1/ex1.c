@@ -15,7 +15,7 @@ int main(int argc, char *argv[]) {
 
 
     for (float x = 0.1; x <= 1; x += .1) {
-        printf("%f %f", x, exp(x));
+        printf("%f\t%f\n", x, exp(x));
         // fprintf(fptr, "Hello World");
     }
     

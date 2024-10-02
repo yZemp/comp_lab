@@ -11,7 +11,7 @@ int main(int argc, char *argv[]) {
         printf("%d:\t%.20e\n", i, f1);
     }
     printf("Double:\n");
-    double d1 = 1.2e34;
+    double d1 = 1.2e304;
     for (size_t i = 0; i < 24; i++) {
         d1 *= 2;
         printf("%d:\t%.20e\n", i, d1);
@@ -19,15 +19,15 @@ int main(int argc, char *argv[]) {
     
     printf("Second cycle\n");
 
-    printf("Signle:\n");
-    float f2 = 1.2e304;
+    printf("Single:\n");
+    float f2 = 1e-13;
     for (size_t i = 0; i < 24; i++) {
         f2 /= 2;
         printf("%d:\t%.20e\t%.20e\n", i, f2, 1 + f2);
     }
 
     printf("Double:\n");
-    double d2 = 1.2e304;
+    double d2 = 1e-13;
     for (size_t i = 0; i < 24; i++) {
         d2 /= 2;
         printf("%d:\t%.20e\t%.20e\n", i, d2, 1 + d2);

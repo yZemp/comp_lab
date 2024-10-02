@@ -3,12 +3,12 @@
 
 int main(int argc, char *argv[]) {
     printf("(.7 + .1) + .3\n");
-    printf("%.16e\n", ((.7 + .1) + .3));
+    printf("%.16f\n", ((.7 + .1) + .3));
 
     printf("\n");
 
     printf(".7 + (.1 + .3)\n");
-    printf("%.16e\n", (.7 + (.1 + .3)));
+    printf("%.16f\n", (.7 + (.1 + .3)));
 
     printf("\n");
 
@@ -21,12 +21,12 @@ int main(int argc, char *argv[]) {
     printf("xt: %f\tyt: %f\tzt: %f\n", xt, yt, zt);
 
     printf("(xt + yt) + zt\n");
-    printf("%.16e\n", ((xt + yt) + zt));
+    printf("%.16f\n", ((xt + yt) + zt));
 
     printf("\n");
 
     printf("xt + (yt + zt)\n");
-    printf("%.16e\n", (xt + (yt + zt)));
+    printf("%.16f\n", (xt + (yt + zt)));
 
     printf("\n");
     
@@ -39,12 +39,12 @@ int main(int argc, char *argv[]) {
     printf("xt: %f\tyt: %f\tzt: %f\n", xt1, yt1, zt1);
 
     printf("(xt + yt) + zt\n");
-    printf("%.16e\n", ((xt1 + yt1) + zt1));
+    printf("%.16f\n", ((xt1 + yt1) + zt1));
 
     printf("\n");
 
     printf("xt + (yt + zt)\n");
-    printf("%.16e\n", (xt1 + (yt1 + zt1)));
+    printf("%.16f\n", (xt1 + (yt1 + zt1)));
 
     printf("\n");
 

@@ -48,6 +48,7 @@ double exp_series(float x, int n) {
 }
 
 double int_power(double x, int n) {
+    if(n == 0) return 1;
     if(n == 1) return x;
     return x * int_power(x, n - 1);
 }

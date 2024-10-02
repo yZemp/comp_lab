@@ -3,10 +3,10 @@
 using namespace std;
 
 double exp_series(double x) {
-    
+    return(0);
 }
 
-int main(int argc, char *argv[]) {
+int main() {
     cout << "Hello World!";
 
     return(0);

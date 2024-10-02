@@ -3,34 +3,34 @@
 
 int main(int argc, char *argv[]) {
     printf("First cycle\n");
-    
+
     printf("Single:\n");
-    float f = 1.2e34;
+    float f1 = 1.2e34;
     for (size_t i = 0; i < 24; i++) {
-        f *= 2;
-        printf("%d:\t%f\n", i, f);
+        f1 *= 2;
+        printf("%d:\t%f\n", i, f1);
     }
     printf("Double:\n");
-    double d = 1.2e34;
+    double d1 = 1.2e34;
     for (size_t i = 0; i < 24; i++) {
-        d *= 2;
-        printf("%d:\t%f\n", i, d);
+        d1 *= 2;
+        printf("%d:\t%f\n", i, d1);
     }
     
     printf("Second cycle\n");
 
     printf("Signle:\n");
-    float f = 1.2e304;
+    float f2 = 1.2e304;
     for (size_t i = 0; i < 24; i++) {
-        f /= 2;
-        printf("%d:\t%f\t%f\n", i, f, 1 + f);
+        f2 /= 2;
+        printf("%d:\t%f\t%f\n", i, f2, 1 + f2);
     }
 
     printf("Double:\n");
-    double d = 1.2e304;
+    double d2 = 1.2e304;
     for (size_t i = 0; i < 24; i++) {
-        d /= 2;
-        printf("%d:\t%f\t%f\n", i, d, 1 + d);
+        d2 /= 2;
+        printf("%d:\t%f\t%f\n", i, d2, 1 + d2);
     }
 
     return(0);

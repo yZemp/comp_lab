@@ -8,19 +8,19 @@ double exp_series(float x) {
 }
 
 int main(int argc, char *argv[]) {
-     FILE *fptr;
+    // FILE *fptr;
 
     // Create a file
-    fptr = fopen("data.txt", "w");
+    // fptr = fopen("data.txt", "w");
 
 
-    for (size_t i = 0.1; i <= 1; i += .1) {
-
-        fprintf(fptr, "Hello World");
+    for (float x = 0.1; x <= 1; x += .1) {
+        printf("%f %f", x, exp(x));
+        // fprintf(fptr, "Hello World");
     }
     
     // Close the file
-    fclose(fptr); 
+    // fclose(fptr); 
 
     return(0);
 }

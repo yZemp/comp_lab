@@ -1,5 +1,5 @@
 import numpy as np
-from backward_sub import backward_sub, mat_vec_prod
+from matrices.matrix_utils import backward_sub, mat_vec_prod
 
 if __name__ == "__main__":
     # Solve 

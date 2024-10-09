@@ -1,12 +1,17 @@
 import numpy as np
-from matrices.matrix_utils import backward_sub, mat_vec_prod
+from matrix_utils import solve_linear_system, mat_vec_prod
 
 if __name__ == "__main__":
-    # Solve 
-    mat = np.array([[6, 563, 32, -27], [0, -14, 0, 14], [0, 0, 2, -1], [0, 0, 0, 87]])
-    b = np.array([7, 2, 1, -5])
+    # Solve linear system
+    mat = np.array([[2, 1, 1], [1, 1, -2], [1, 2, 1]], dtype = float)
+    b = np.array([8, -2, 2])
     
-    x = backward_sub(mat, b)
-    print("Soluzione x = ", x)
-    b_ihope = mat_vec_prod(mat, x)
-    print("b (in teoria) = ", b)
+    # NOTE: transforming the system in an equivalent one
+    # ==> solution is the same
+    x, mat, vec = solve_linear_system(mat, b)
+
+
+    # print("Soluzione  = ", x)
+
+    b = mat_vec_prod(mat, x)
+    print("Inverse operation (should yield b of the upper triangular system) = ", b)

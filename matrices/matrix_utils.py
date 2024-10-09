@@ -17,14 +17,30 @@ def _to_upp_triangular(mat, b):
     NOTE: Should also work if b is a Matrix
     '''
 
+    # partial pivoting to account for zero or close-to-zero elements in matjj:
+    for j, _ in enumerate(mat):
+        # print("-------------------------\nj cycle:\n", mat, "\n")
+        # print("Inizio:\n", mat, "\n")
+        # Find row k > j with largest element in column
+        index = 0
+        max = 0
+        for l in range(j, len(mat[j])):
+            if mat[l][j] > max:
+                max = mat[l][j]
+                index = l
+        if j == index: continue
+        _gauss_swap(mat, j, index)
+        _gauss_swap(b, j, index)
+        # print("Fine:\n", mat, "\n")
+
+    # Gaussian elimination
     for j, _ in enumerate(mat):
         for i in range(j + 1, len(mat)):
             # print(f"\ni: {i}\tj: {j}\n")
             # print(mat, b)
             # if mat[j][j] == 0: continue
             gauss_elim_coeff = mat[i][j] / mat[j][j]
-            # TODO: can mat[j][j] ever be zero?
-            # print(mat[i], mat[j], gauss_elim_coeff)
+            
             mat[i] = _gauss_elim(mat[i], mat[j], gauss_elim_coeff)
             b[i] = _gauss_elim(b[i], b[j], gauss_elim_coeff)
 
@@ -34,8 +50,22 @@ def _to_upp_triangular(mat, b):
     return mat, b
 
 def _gauss_elim(rowi, rowj, coeff):
+    '''
+    Perform gaussian substitution of rowi with rowj times a specific coefficient
+    '''
     # print("New row:\t ", rowi - coeff * rowj)
     return rowi - coeff * rowj
+
+def _gauss_swap(arr, i, j):
+    '''
+    Swaps rows i, j of a given matrix / vector
+    '''
+    # FIXME: nothing works here
+    
+    temp = np.copy(arr[i])
+    arr[i] = np.copy(arr[j])
+    arr[j] = np.copy(temp)
+    return
 
 def get_inverse(mat):
     '''
@@ -113,8 +143,9 @@ def solve_linear_system(mat, vec):
     return x, mat, vec
 
 if __name__ == "__main__":
-    mat = np.array([[2, 1, 1], [1, 1, -2], [1, 2, 1]], dtype = float)
-    inverse = get_inverse(mat)
-    print("Inverse:")
-    print(inverse) 
+    mat = np.array([[2, 1, 1], [2, 1, -4], [1, 2, 1]], dtype = float)
+    b = np.array([8, -2, 2], dtype = float)
+    x, _, _ = solve_linear_system(mat, b)
+    print("X:")
+    print(x) 
 

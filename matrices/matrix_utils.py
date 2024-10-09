@@ -20,7 +20,7 @@ def _to_upp_triangular(mat, b):
     # partial pivoting to account for zero or close-to-zero elements in matjj:
     for j, _ in enumerate(mat):
         # print("-------------------------\nj cycle:\n", mat, "\n")
-        # print("Inizio:\n", mat, "\n")
+        print("Inizio:\n", mat, "\n")
         # Find row k > j with largest element in column
         index = 0
         max = 0
@@ -31,7 +31,7 @@ def _to_upp_triangular(mat, b):
         if j == index: continue
         _gauss_swap(mat, j, index)
         _gauss_swap(b, j, index)
-        # print("Fine:\n", mat, "\n")
+        print("Fine:\n", mat, "\n")
 
     # Gaussian elimination
     for j, _ in enumerate(mat):

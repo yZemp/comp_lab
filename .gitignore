@@ -17,6 +17,7 @@ __pycache__/
 
 # Datafiles
 *.dat
+*.txt
 
 # Distribution / packaging
 .Python

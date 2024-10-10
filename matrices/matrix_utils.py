@@ -17,7 +17,7 @@ def _to_upp_triangular(mat, b):
     NOTE: Should also work if b is a Matrix
     '''
 
-    print(mat)
+    # print(mat)
     # partial pivoting to account for zero or close-to-zero elements in matjj:
     for j, _ in enumerate(mat):
         # print("-------------------------\nj cycle:\n", mat, "\n")

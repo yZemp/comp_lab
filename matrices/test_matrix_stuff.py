@@ -7,6 +7,7 @@ if __name__ == "__main__":
     print(clear_space)
 
     # EX 1
+    print("EX 1")
 
     # Solve linear system
     mat = np.array([[2, 1, 1], [0, 1, -2], [0, 0, 1]], dtype = float)
@@ -24,6 +25,7 @@ if __name__ == "__main__":
 
 
     #EX 2
+    print("EX 2")
 
     # Solve linear system
     mat = np.array([[2, 1, 1], [1, 1, -2], [1, 2, 1]], dtype = float)
@@ -43,7 +45,8 @@ if __name__ == "__main__":
 
 
 
-    #EX 3
+    #EX 2.1
+    print("EX 2.1")
 
     # Invert matrix
     mat = np.array([[2, 1, 1], [1, 1, -2], [1, 2, 1]], dtype = float)
@@ -56,7 +59,8 @@ if __name__ == "__main__":
 
 
 
-    #EX 4
+    #EX 2.2
+    print("EX 2.2")
 
     # Solve linear system (needing partial pivoting)
     mat = np.array([[2, 1, 1], [2, 1, -4], [1, 2, 1]], dtype = float)
@@ -75,7 +79,8 @@ if __name__ == "__main__":
 
 
 
-    #EX 4
+    #EX 2.3
+    print("EX 2.3")
 
     # Solve linear system (needing partial pivoting)
     mat = np.array([[10e-20, -1], [1, 1]], dtype = np.float128)

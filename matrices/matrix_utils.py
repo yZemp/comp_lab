@@ -17,12 +17,13 @@ def _to_upp_triangular(mat, b):
     NOTE: Should also work if b is a Matrix
     '''
 
+    print(mat)
     # partial pivoting to account for zero or close-to-zero elements in matjj:
     for j, _ in enumerate(mat):
         # print("-------------------------\nj cycle:\n", mat, "\n")
-        print("Inizio:\n", mat, "\n")
+        # print("Inizio:\n", mat, "\n")
         # Find row k > j with largest element in column
-        index = 0
+        index = j
         max = 0
         for l in range(j, len(mat[j])):
             if mat[l][j] > max:
@@ -31,10 +32,9 @@ def _to_upp_triangular(mat, b):
         if j == index: continue
         _gauss_swap(mat, j, index)
         _gauss_swap(b, j, index)
-        print("Fine:\n", mat, "\n")
+        # print("Fine:\n", mat, "\n")
 
     # Gaussian elimination
-    for j, _ in enumerate(mat):
         for i in range(j + 1, len(mat)):
             # print(f"\ni: {i}\tj: {j}\n")
             # print(mat, b)
@@ -62,6 +62,7 @@ def _gauss_swap(arr, i, j):
     '''
     # FIXME: nothing works here
     
+    print("SWAPPING", i, j)
     temp = np.copy(arr[i])
     arr[i] = np.copy(arr[j])
     arr[j] = np.copy(temp)
@@ -142,10 +143,47 @@ def solve_linear_system(mat, vec):
     
     return x, mat, vec
 
-if __name__ == "__main__":
-    mat = np.array([[2, 1, 1], [2, 1, -4], [1, 2, 1]], dtype = float)
-    b = np.array([8, -2, 2], dtype = float)
-    x, _, _ = solve_linear_system(mat, b)
-    print("X:")
-    print(x) 
+def LU_decompose(mat):
+    '''
+    Decompose a NxN matrix A in two matrices L, U
+    where:
+        L is lower triangular with unitary diagonal
+        U is upper triangular 
+    '''
+    
+    print(mat)
 
+    L = np.array([[1. if j == i else 0. for j in range(len(mat))] for i in range(len(mat))], dtype = float)
+
+    # Gaussian elimination
+    for j, _ in enumerate(mat):
+        for i in range(j + 1, len(mat)):
+            # print(f"\ni: {i}\tj: {j}\n")
+            # print(mat, b)
+            # if mat[j][j] == 0: continue
+            gauss_elim_coeff = mat[i][j] / mat[j][j]
+            
+            mat[i] = _gauss_elim(mat[i], mat[j], gauss_elim_coeff)
+
+            # L[1 + j][]    
+
+    # print("Upper triangular form:")
+    # print(mat, b)
+
+
+if __name__ == "__main__":
+
+
+    # Solve linear system (needing partial pivoting)
+    mat = np.array([[0, -1], [1, 1]], dtype = np.float128)
+    b = np.array([1, 2], dtype = np.float128)
+    
+    x, mat, vec = solve_linear_system(mat, b)
+
+
+    print("Solution  = ", x)
+
+    b = mat_vec_prod(mat, x)
+    # b = np.dot(mat, x)
+    print("Inverse operation (should yield b of the upper triangular system) = ", b)
+    # FIXME: inverse operation is rekt

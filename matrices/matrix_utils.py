@@ -62,7 +62,7 @@ def _gauss_swap(arr, i, j):
     '''
     # FIXME: nothing works here
     
-    print("SWAPPING", i, j)
+    # print("SWAPPING", i, j)
     temp = np.copy(arr[i])
     arr[i] = np.copy(arr[j])
     arr[j] = np.copy(temp)
@@ -151,13 +151,12 @@ def LU_decompose(mat):
         U is upper triangular 
     '''
     
-    print(mat)
-
     L = np.array([[1. if j == i else 0. for j in range(len(mat))] for i in range(len(mat))], dtype = float)
 
     # Gaussian elimination
     for j, _ in enumerate(mat):
         for i in range(j + 1, len(mat)):
+            # print(j, i)
             # print(f"\ni: {i}\tj: {j}\n")
             # print(mat, b)
             # if mat[j][j] == 0: continue
@@ -165,25 +164,20 @@ def LU_decompose(mat):
             
             mat[i] = _gauss_elim(mat[i], mat[j], gauss_elim_coeff)
 
-            # L[1 + j][]    
+            L[i][j] = gauss_elim_coeff
 
-    # print("Upper triangular form:")
-    # print(mat, b)
+    return L, mat
 
+def determinant(mat):
+    '''
+    Calculate determinant of NxN matrix using the LU decomposition method
+    '''
+
+    L, U = LU_decompose(mat)
+    # Det(L) = 0
+    # U is upper triangular
+    return np.prod([row[i] for i, row in enumerate(U)])
 
 if __name__ == "__main__":
-
-
-    # Solve linear system (needing partial pivoting)
-    mat = np.array([[0, -1], [1, 1]], dtype = np.float128)
-    b = np.array([1, 2], dtype = np.float128)
-    
-    x, mat, vec = solve_linear_system(mat, b)
-
-
-    print("Solution  = ", x)
-
-    b = mat_vec_prod(mat, x)
-    # b = np.dot(mat, x)
-    print("Inverse operation (should yield b of the upper triangular system) = ", b)
-    # FIXME: inverse operation is rekt
+    mat = np.array([[2, 1, 1], [1, 1, -2], [1, 2, 1]], dtype = float)
+    print(determinant(mat))

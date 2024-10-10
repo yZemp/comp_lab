@@ -1,5 +1,5 @@
 import numpy as np
-from matrix_utils import solve_linear_system, get_inverse, mat_vec_prod
+from matrix_utils import solve_linear_system, get_inverse, mat_vec_prod, LU_decompose, determinant
 
 clear_space = "\n----------------------------------------------------------------\n"
 
@@ -95,5 +95,30 @@ if __name__ == "__main__":
     # b = np.dot(mat, x)
     print("Inverse operation (should yield b of the upper triangular system) = ", b)
     # FIXME: inverse operation is rekt
+
+    print(clear_space)
+
+
+
+
+    #EX 3
+    print("EX 3")
+
+    # Perform LU decomposition
+    mat = np.array([[2, 1, 1], [1, 1, -2], [1, 2, 1]], dtype = float)
+    
+    L, U = LU_decompose(mat)
+
+
+    print("L:\n", L)
+    print("U:\n", U)
+
+    check = np.dot(L, U)
+
+    print("\nShould be original mat:")
+    print(check)
+
+    print("\nCalculating determinant using LU decomposition:\n")
+    print(determinant(mat))
 
     print(clear_space)

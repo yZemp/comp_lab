@@ -15,6 +15,9 @@ __pycache__/
 *.hex
 *.sh
 
+# Datafiles
+*.dat
+
 # Distribution / packaging
 .Python
 build/

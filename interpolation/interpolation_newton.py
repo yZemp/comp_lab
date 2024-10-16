@@ -1,37 +1,50 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import random as rand
+import scipy.stats as sts
 
-def nth_newton_poly(j, n):
-    # n is nth-chebyshev node
-    if j == 0: return lambda x: 1
+import sys
+sys.path.append("~/Documents/Programming/comp_lab/")
+# from matrices.matrix_utils import get_inverse
+from interpolation.Polynomial_classes import *
 
-    def poly(x):
-        return np.prod([(x - nth_chebyshev_node(i, n)) for i in range(0, j)])
-     
-    return poly
+# Direct approach using Newton polynomials
 
-def nth_chebyshev_node(j, n):
-    return - np.cos(j * np.pi / (n - 1))
 
-# def nth_chebyshev_node(j, n):
-#     def node(n):
-#         return - np.cos(j * np.pi / (n - 1))
-#     return node
+def _interp(arr):
+    '''
+    Should receive array of array of f_i
+    Returns array of divided differences
+    '''
+    if len(arr) == 1: return arr
+
+    # FIXME
+
+    # Here x is global data
+    temp = np.array([(arr[-1][i + 1] - arr[-1][i]) / (x[i + 1] - x[i]) for i in range(0, (arr[-1]) - 1)], dtype = np.float128)
+    turbomat = np.append(arr, _interp(temp))
+    return turbomat
+
+
+# Init data
+x = np.array([0, 10, 15, 20, 22.5, 30]) # i=0,1,2,3,4,5
+f = np.array([0, 227.04, 362.78, 517.35, 602.97, 901.67])
 
 
 if __name__ == "__main__":
-    # Starting data
-    x = [0, 10, 15, 20, 22.5, 30] # i=0,1,2,3,4,5
-    f = [0, 227.04, 362.78, 517.35, 602.97, 901.67]
 
-    lnsp = np.linspace(0, 30, 1_000)
-    poly_4 = nth_newton_poly(2, 2)
-    poly_values = np.array([poly_4(x) for x in lnsp])
-    # print(poly_4(0))
-    plt.plot(lnsp, poly_values, c = "#a909e3")
+    # Derivation of interpolation coefficients
 
-    plt.scatter(x, f, marker = "x", c = "#040404")
+    # Init starting as array of array of f_i
+    # This will become (in the next line) the turbomatrix
+    starting = np.array([f])
+    # Derive complete turbomatrix
+    turbomatrix = _interp(starting)
+    
+    print(turbomatrix)
 
-
-
-    plt.show()
+    # plt.legend()
+    # plt.show()
+    
+    
+    # plt.plot(x, y, c = (.6, 1 - .2 * i, .8), label = f"Order: {i}")

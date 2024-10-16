@@ -6,7 +6,7 @@ import scipy.stats as sts
 import sys
 sys.path.append("../")
 from matrices.matrix_utils import get_inverse
-from Polynomial import *
+from interpolation.Polynomial_classes import *
 
 # Direct approach using Vandermonde (monomial) matrix
 

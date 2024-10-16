@@ -5,50 +5,17 @@ import scipy.stats as sts
 
 import sys
 sys.path.append("../")
-from matrices.matrix_utils import get_inverse, mat_vec_prod
+from matrices.matrix_utils import get_inverse
+from Polynomial_classes import *
 
-# Direct approach using Vandermonde (monomial) matrix
+# Direct approach using Lagrange polynomials 
 
-
-np.set_printoptions(suppress=True,precision=3)
-
-
-def get_vandermonde_mat(arr):
+def get_interp_mat(arr):
     '''
-    Given an array, this function returns its respective vandermonde matrix
+    Given an array, this function returns its respective interpolation matrix
+    In theis case it's the identity
     '''
-    return np.array([[np.power(x, i) for i in range(len(arr))] for x in arr], dtype = np.float128)
-    
-
-def polyn(param):
-    '''
-    Returns a polynomial of n-th order to be evaluated
-    
-    if param is an array: 
-        param is array of coefficients
-    
-    if param is int: 
-        polynomial order is param, and all coefficients are assumed to be 1
-
-    '''
-
-    if type(param) == int:
-        if param == 0: return lambda x: 1
-
-        def func(x):
-            return np.sum([np.power(x, i) for i in range(0, param)], dtype = np.float128)
-        
-        return func
-
-    if type(param) == np.ndarray:
-
-        def func(x):
-            return np.sum([el * np.power(x, i) for i, el in enumerate(param)])
-
-        return func
-    
-    
-    return -1
+    return np.array([[1. if i == j else 0. for j in range(len(arr))] for i in range(len(arr))], dtype = float)
 
 
 if __name__ == "__main__":
@@ -63,17 +30,17 @@ if __name__ == "__main__":
 
     plt.scatter(x, f, marker = "x", c = "#040404", label = "Data")
 
-    vandermonde_mat = get_vandermonde_mat(x)
-    anti_vandermonde = get_inverse(vandermonde_mat)
-    a = np.dot(anti_vandermonde, f)
+    interp_mat = get_interp_mat(x)
+    anti_mat = get_inverse(interp_mat)
+    a = np.dot(anti_mat, f)
 
 
     lnsp = np.linspace(-5, 35, 1_000)
 
-    # Creation of polynomial to be evaluated
-    poly = polyn(a)
+    # Creation of lagrangian polynomial
+    poly = Lag_polynomial(a)
     # Evaluating polynomial in all of lnsp
-    y = [poly(el) for el in lnsp]
+    y = [poly.evaluate(el) for el in lnsp]
     plt.plot(lnsp, y, c = "#a30404", label = "Fit")
 
 

@@ -1,20 +1,24 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-def euler(init_value: tuple, h = .01):
+def euler(init_value: tuple, h = .01, domain = (0, 10)):
     solved = [init_value]
 
-    for i in range(1000):
+    for i in range(int((domain[1] - domain[0]) / h)):
         new_x = solved[-1][0] + h
-        new_y = y(solved[-1][0]) + h * k *y(solved[-1][0])
+        new_y = solved[-1][0] + h * f(solved[-1][0], solved[-1][1])
         solved.append((new_x, new_y))
 
     return solved
 
-def y(t): return np.exp(t)
+
+# Analytic solution
+
+def solution(t): return np.exp(t)
 
 
 k = 14
+def f(x, y): return k * y
 
 if __name__ == "__main__":
     '''
@@ -27,9 +31,9 @@ if __name__ == "__main__":
     print(solved)
 
     lnsp = np.linspace(0, 10, 1000)
-    plt.plot(lnsp, y(lnsp), c = (0., .1, .3), label = "Correct y(t)")
+    plt.plot(lnsp, solution(lnsp), c = (0., .1, .3), label = "Analytical solution")
     plt.xlabel("t")
-    # plt.yscale("log")
+    plt.yscale("log")
 
     plt.scatter(* zip(* solved), c = (.6, .2, .1), marker = "x", label = "Numerical solution")
 

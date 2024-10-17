@@ -47,6 +47,8 @@ if __name__ == "__main__":
 
     fig, ax = plt.subplots(3)
 
+    fig.set_size_inches(200, 100, forward = True)
+
     fig.suptitle("Euler's method", fontsize = 20)
 
     lnsp = np.linspace(0, final_time, 1000)
@@ -82,3 +84,4 @@ if __name__ == "__main__":
     ax[2].set_ylim([-50, 50])
 
     plt.show()
+    fig.savefig("euler_harmonic_oscillator.png", dpi = fig.dpi, bbox_inches = "tight")

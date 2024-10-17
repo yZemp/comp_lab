@@ -37,7 +37,7 @@ def f(x, y):
     return - y
 
 
-def _F(Y):
+def _F(Y, phi):
     '''
     This represent a vectorial function
     accepts a vector and returns a vector
@@ -46,24 +46,25 @@ def _F(Y):
     NOT TO BE CONFUSED WITH f(x, y)
     '''
 
-    # NOTE: here we use f(x, y) as Phi
-
-    return np.array([1, Y[2], f(Y[0], Y[1])], dtype = np.float128)
+    return np.array([1, Y[2], phi(Y[0], Y[1])], dtype = np.float128)
 
 
-def _euler_step(Y, h):
+def _step(Y, h, phi):
     '''
-    Euler "stepper"
-    returns Y + h * f(x, y)
-    where Y can be decomposed in (x, y, z)
-    where:
-        x = time
-        y = actual y coordinate of the point
-        z = y' derivative in y (only needed to calculate next Y)
-
+    This is a "stepper" for one-step methods
+    returns Y + h * _F(Y)
+    where 
+        _F is a generic function of Y that approximate the solution
+            _F is a function of phi
+            NOTE: with phi = f we have Euler's method
+        Y can be decomposed in (x, y, z)
+            where:
+                x = time
+                y = actual y coordinate of the point
+                z = derivative of y (only needed to calculate next Y)
     '''
-    # print(Y + h * _F(Y), "\n")
-    return(Y + h * _F(Y))
+
+    return(Y + h * _F(Y, phi))
 
 
 def euler_method(Y0, h = H0, final_time = FINAL_TIME):
@@ -80,7 +81,8 @@ def euler_method(Y0, h = H0, final_time = FINAL_TIME):
 
     # Computing steps
     while steps[-1][0] < final_time:
-        new_Y = _euler_step(steps[-1], h)
+        # NOTE: passing f to _F (through the stepper) means we are using Euler's method
+        new_Y = _step(steps[-1], h, f)
         steps.append(new_Y)
     
     return steps
@@ -90,14 +92,14 @@ def euler_method(Y0, h = H0, final_time = FINAL_TIME):
 if __name__ == "__main__":
 
     arrx = np.linspace(0., FINAL_TIME, 10_000)
-    plt.plot(arrx, solution(arrx), label = "Analytical solution")
+    plt.plot(arrx, solution(arrx), c = (.1, .1, .1), label = "Analytical solution")
 
     ###############################################################################################
     # Euler method
 
     euler_solved = euler_method((0., 0., 1.))
-    coords = unpack(euler_solved)
+    euler_coords = unpack(euler_solved)
 
-    plt.plot(coords[0], coords[1], label = "Euler method")
+    plt.plot(euler_coords[0], euler_coords[1], c = (.1, .7, .1), label = "Euler method")
     plt.legend()
     plt.show()

@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 # Useful vars
 
 H0 = .01 # Default precision of step
-FINAL_TIME = 30 # Default length of approximation
+FINAL_TIME = 100 # Default length of approximation
 
 
 def unpack(arr):
@@ -28,16 +28,29 @@ def solution(x):
     return np.sin(x)
 
 
-def f(x, y):
+def f(x, y, z, h):
     '''
+    This represent phi of euler's method
     This represent known element of the differential equation
 
     NOT TO BE CONFUSED WITH _F(Y)
+
+    NOTE: making argument like that instead of (Y) or (Y, h) is for simplicity's sake
     '''
+
     return - y
 
+def rk2_f(x, y, z, h):
+    '''
+    This represent phi of rk2's method
+    
+    NOTE: making argument like that instead of (Y) or (Y, h) is for simplicity's sake
+    '''
 
-def _F(Y, phi):
+    return f(x + .5 * h, y + .5 * h * f(x, y, z, h), z, h)
+
+
+def _F(Y, phi, h):
     '''
     This represent a vectorial function
     accepts a vector and returns a vector
@@ -46,7 +59,7 @@ def _F(Y, phi):
     NOT TO BE CONFUSED WITH f(x, y)
     '''
 
-    return np.array([1, Y[2], phi(Y[0], Y[1])], dtype = np.float128)
+    return np.array([1, Y[2], phi(Y[0], Y[1], Y[2], h)], dtype = np.float128)
 
 
 def _step(Y, h, phi):
@@ -57,6 +70,7 @@ def _step(Y, h, phi):
         _F is a generic function of Y that approximate the solution
             _F is a function of phi
             NOTE: with phi = f we have Euler's method
+            NOTE: with phi = rk2_f we have RK2 method
         Y can be decomposed in (x, y, z)
             where:
                 x = time
@@ -64,12 +78,13 @@ def _step(Y, h, phi):
                 z = derivative of y (only needed to calculate next Y)
     '''
 
-    return(Y + h * _F(Y, phi))
+    return(Y + h * _F(Y, phi, h))
 
 
 def euler_method(Y0, h = H0, final_time = FINAL_TIME):
     '''
     Approximate the differential equation with known value f(x, y)
+    Using Euler's method
     given:
         starting values (x0, y0, z0) = Y0 (this has to be an array-like)
         final_time = for how long to approx
@@ -88,6 +103,27 @@ def euler_method(Y0, h = H0, final_time = FINAL_TIME):
     return steps
 
 
+def rk2_method(Y0, h = H0, final_time = FINAL_TIME):
+    '''
+    Approximate the differential equation with known value f(x, y)
+    Using RK2 algorithm
+    given:
+        starting values (x0, y0, z0) = Y0 (this has to be an array-like)
+        final_time = for how long to approx
+        h = how little the steps (the smaller the more precise) 
+    '''
+
+    # This list will hold every step, starting with Y0
+    steps = [np.array(Y0)]
+
+    # Computing steps
+    while steps[-1][0] < final_time:
+        # NOTE: passing rk2_f to _F (through the stepper) means we are using RK2's method
+        new_Y = _step(steps[-1], h, rk2_f)
+        steps.append(new_Y)
+    
+    return steps
+
 
 if __name__ == "__main__":
 
@@ -101,5 +137,15 @@ if __name__ == "__main__":
     euler_coords = unpack(euler_solved)
 
     plt.plot(euler_coords[0], euler_coords[1], c = (.1, .7, .1), label = "Euler method")
+    plt.legend()
+
+
+    ###############################################################################################
+    # RK2 method
+
+    rk2_solved = rk2_method((0., 0., 1.))
+    rk2_coords = unpack(rk2_solved)
+
+    plt.plot(rk2_coords[0], rk2_coords[1], c = (.1, .1, .9), label = "RK2 method")
     plt.legend()
     plt.show()

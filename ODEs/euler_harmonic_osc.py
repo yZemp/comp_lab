@@ -1,9 +1,9 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-final_time = 10
+final_time = 30
 
-def euler(t0, theta0, theta_dot0, h = .01, final_time = final_time):
+def euler(t0, theta0, theta_dot0, h = .001, final_time = final_time):
     arr_t = [t0]
     arr_theta = [theta0]
     arr_theta_dot = [theta_dot0]
@@ -41,17 +41,44 @@ if __name__ == "__main__":
         phi_dot(t) = - theta
     '''
 
-    # FIRST EQ
+    # EULER METHOD
     solved = euler(0., 0., 1.)
     # print(len(solved))
 
+    fig, ax = plt.subplots(3)
+
+    fig.suptitle("Euler's method", fontsize = 20)
+
     lnsp = np.linspace(0, final_time, 1000)
-    plt.plot(lnsp, solution(lnsp), c = (0., .1, .3), label = "Correct $\Theta(t)$")
+    ax[0].plot(lnsp, solution(lnsp), c = (0., .1, .3), label = "Correct $\Theta(t)$")
     plt.xlabel("t")
     # plt.yscale("log")
 
+    arrx = []
+    arry = []
     for x, y, _ in zip(*solved):
-        plt.scatter(x, y, c = (.6, .2, .1), marker = "x")
+        arrx.append(x)
+        arry.append(y)
 
-    plt.legend()
+    ax[0].plot(arrx, arry, c = (.1, .7, .3), label = "Euler h = .001")
+    ax[0].legend()
+
+    ax[1].plot(arrx, solution(arrx) - arry, c = (.9, .2, .5), label = f"Errors")
+    ax[1].legend()
+
+
+    # Perform multiple numeric integration with different h
+    for h in [1, .8, .6, .4, .2, .1, .06, .04, .01, .005, .001]:
+        solved = euler(0., 0., 1., h = h)
+        arrx = []
+        arry = []
+        for x, y, _ in zip(*solved):
+            arrx.append(x)
+            arry.append(y)
+
+        ax[2].plot(arrx, solution(arrx) - arry, c = (min([h, 1]), .2, .5), label = f"Errors h = {h}")
+        ax[2].legend()
+
+    ax[2].set_ylim([-50, 50])
+
     plt.show()

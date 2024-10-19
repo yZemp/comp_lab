@@ -172,19 +172,26 @@ def rk4_method(Y0, h = H0, final_time = FINAL_TIME):
 
 
 
-def plot_errors(h0 = 1, hf = .01, time = FINAL_TIME):
+def error_comparison(h0 = 1, hf = .01, time = FINAL_TIME):
     '''
-    Plot errors at fixed time
-    as a function of h 
+    Plot errors as a function of h
+
+    Different methods of computing errors:
+        Error evaluated at final time (very random)
+        Sum of all errors since t0 to final time 
     '''
 
-    arrh = np.logspace(h0, hf, endpoint = True, base = 2, num = 100) - 1
+    arrh = np.logspace(h0, hf, endpoint = True, base = 2, num = 500) - 1
     # print(arrh)
 
 
     euler_err = []
     rk2_err = []
     rk4_err = []
+
+    euler_err_fixed = []
+    rk2_err_fixed = []
+    rk4_err_fixed = []
 
     for h in arrh:
         euler_solved = euler_method(START_VALS, h = h)
@@ -197,21 +204,46 @@ def plot_errors(h0 = 1, hf = .01, time = FINAL_TIME):
         rk4_coords = unpack(rk4_solved)
 
         # TODO: find a better method of evaluation for errors
+        
         euler_err.append(np.sum([abs(solution(euler_coords[0][i]) - euler_coords[1][i]) for i in range(len(euler_coords[0]))]))
         rk2_err.append(np.sum([abs(solution(rk2_coords[0][i]) - rk2_coords[1][i]) for i in range(len(rk2_coords[0]))]))
         rk4_err.append(np.sum([abs(solution(rk4_coords[0][i]) - rk4_coords[1][i]) for i in range(len(rk4_coords[0]))]))
         
+        euler_err_fixed.append(solution(euler_coords[0][-1]) - euler_coords[1][-1])
+        rk2_err_fixed.append(solution(rk2_coords[0][-1]) - rk2_coords[1][-1])
+        rk4_err_fixed.append(solution(rk4_coords[0][-1]) - rk4_coords[1][-1])
 
-    plt.plot(arrh, euler_err, c = (.1, .7, .1), label = "Euler errors")
-    plt.plot(arrh, rk2_err, c =  (.1, .1, .9), label = "RK2 errors")
-    plt.plot(arrh, rk4_err, c =  (.8, .1, .3), label = "RK4 errors")
 
-    plt.yscale("log")
-    plt.xscale("log")
-    ax = plt.gca()
-    ax.xaxis.set_inverted(True)
+    fig, ax = plt.subplots(2)
+    
+    ax[0].plot(arrh, euler_err, c = (.1, .7, .1), label = "Euler")
+    ax[0].plot(arrh, rk2_err, c =  (.1, .1, .9), label = "RK2")
+    ax[0].plot(arrh, rk4_err, c =  (.8, .1, .3), label = "RK4")
 
-    plt.legend()
+    ax[0].set_title("Error sum")
+    ax[0].set_yscale("log")
+    ax[0].set_xscale("log")
+    ax[0].xaxis.set_inverted(True)
+
+    ax[0].legend()
+
+
+
+    ax[1].set_title("Error at fixed time")
+    ax[1].plot(arrh, euler_err_fixed, c = (.1, .7, .1), label = "Euler")
+    ax[1].plot(arrh, rk2_err_fixed, c =  (.1, .1, .9), label = "RK2")
+    ax[1].plot(arrh, rk4_err_fixed, c =  (.8, .1, .3), label = "RK4")
+
+    ax[1].set_yscale("log")
+    ax[1].set_xscale("log")
+    ax[1].xaxis.set_inverted(True)
+
+    ax[1].legend()
+
+
+    
+
+
     plt.show()
 
 
@@ -261,4 +293,4 @@ if __name__ == "__main__":
     ###############################################################################################
     # Errors
 
-    plot_errors()
+    error_comparison()

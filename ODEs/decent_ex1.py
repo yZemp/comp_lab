@@ -30,15 +30,18 @@ def solution(x):
 
 def f(x, y, z, h):
     '''
-    This represent phi of euler's method
     This represent known element of the differential equation
+
+    incidentally:
+    This represent phi of euler's method
 
     NOT TO BE CONFUSED WITH _F(Y)
 
-    NOTE: making argument like that instead of (Y) or (Y, h) is for simplicity's sake
+    NOTE: passing (x, y, z, h) instead of (Y) or (Y, h) is for compatibility's take
     '''
 
     return - y
+
 
 def rk2_f(x, y, z, h):
     '''
@@ -48,6 +51,23 @@ def rk2_f(x, y, z, h):
     '''
 
     return f(x + .5 * h, y + .5 * h * f(x, y, z, h), z, h)
+
+
+def rk4_f(x, y, z, h):
+    '''
+    This represent phi of rk2's method
+    
+    NOTE: passing (x, y, z, h) instead of (Y) or (Y, h) is for compatibility's take
+    '''
+
+    k1 = f(x, y, z, h)
+    k2 = f(x + .5 * h, y + .5 * h * k1, z, h)
+    k3 = f(x + .5 * h, y + .5 * h * k2, z, h)
+    k4 = f(x + h, y + h * k3, z, h)
+
+    return (1 / 6) * (k1 + 2 * k2 + 2 * k3 + k4)
+
+
 
 
 def _F(Y, phi, h):
@@ -60,6 +80,7 @@ def _F(Y, phi, h):
     '''
 
     return np.array([1, Y[2], phi(Y[0], Y[1], Y[2], h)], dtype = np.float128)
+
 
 
 def _step(Y, h, phi):
@@ -79,6 +100,8 @@ def _step(Y, h, phi):
     '''
 
     return(Y + h * _F(Y, phi, h))
+
+
 
 
 def euler_method(Y0, h = H0, final_time = FINAL_TIME):
@@ -125,18 +148,43 @@ def rk2_method(Y0, h = H0, final_time = FINAL_TIME):
     return steps
 
 
+
+def rk4_method(Y0, h = H0, final_time = FINAL_TIME):
+    '''
+    Approximate the differential equation with known value f(x, y)
+    Using RK4 algorithm
+    given:
+        starting values (x0, y0, z0) = Y0 (this has to be an array-like)
+        final_time = for how long to approx
+        h = how little the steps (the smaller the more precise) 
+    '''
+
+    # This list will hold every step, starting with Y0
+    steps = [np.array(Y0)]
+
+    # Computing steps
+    while steps[-1][0] < final_time:
+        # NOTE: passing rk2_f to _F (through the stepper) means we are using RK2's method
+        new_Y = _step(steps[-1], h, rk4_f)
+        steps.append(new_Y)
+    
+    return steps
+
+
+
 def plot_errors(h0 = 1, hf = .01, time = FINAL_TIME):
     '''
     Plot errors at fixed time
     as a function of h 
     '''
 
-    arrh = np.logspace(h0, hf, endpoint = True, base = 2) - 1
+    arrh = np.logspace(h0, hf, endpoint = True, base = 2, num = 100) - 1
     # print(arrh)
 
 
     euler_err = []
     rk2_err = []
+    rk4_err = []
 
     for h in arrh:
         euler_solved = euler_method(START_VALS, h = h)
@@ -145,13 +193,18 @@ def plot_errors(h0 = 1, hf = .01, time = FINAL_TIME):
         rk2_solved = rk2_method(START_VALS, h = h)
         rk2_coords = unpack(rk2_solved)
 
+        rk4_solved = rk4_method(START_VALS, h = h)
+        rk4_coords = unpack(rk4_solved)
 
+        # TODO: find a better method of evaluation for errors
         euler_err.append(np.sum([abs(solution(euler_coords[0][i]) - euler_coords[1][i]) for i in range(len(euler_coords[0]))]))
         rk2_err.append(np.sum([abs(solution(rk2_coords[0][i]) - rk2_coords[1][i]) for i in range(len(rk2_coords[0]))]))
+        rk4_err.append(np.sum([abs(solution(rk4_coords[0][i]) - rk4_coords[1][i]) for i in range(len(rk4_coords[0]))]))
         
 
     plt.plot(arrh, euler_err, c = (.1, .7, .1), label = "Euler errors")
     plt.plot(arrh, rk2_err, c =  (.1, .1, .9), label = "RK2 errors")
+    plt.plot(arrh, rk4_err, c =  (.8, .1, .3), label = "RK4 errors")
 
     plt.yscale("log")
     plt.xscale("log")
@@ -167,7 +220,8 @@ def plot_errors(h0 = 1, hf = .01, time = FINAL_TIME):
 if __name__ == "__main__":
 
     arrx = np.linspace(0., FINAL_TIME, 10_000)
-    plt.plot(arrx, solution(arrx), c = (.1, .1, .1), label = "Analytical solution")
+    plt.plot(arrx, solution(arrx), c = (.1, .1, .1), marker = "", label = "Analytical solution")
+
 
     ###############################################################################################
     # Euler method
@@ -175,7 +229,7 @@ if __name__ == "__main__":
     euler_solved = euler_method(START_VALS)
     euler_coords = unpack(euler_solved)
 
-    plt.plot(euler_coords[0], euler_coords[1], c = (.1, .7, .1), label = "Euler method")
+    plt.plot(euler_coords[0], euler_coords[1], marker = "", c = (.1, .7, .1), label = "Euler method")
     plt.legend()
 
 
@@ -185,11 +239,23 @@ if __name__ == "__main__":
     rk2_solved = rk2_method(START_VALS)
     rk2_coords = unpack(rk2_solved)
 
-    plt.plot(rk2_coords[0], rk2_coords[1], c = (.1, .1, .9), label = "RK2 method")
+    plt.plot(rk2_coords[0], rk2_coords[1], marker = "", c = (.1, .1, .9), label = "RK2 method")
     plt.legend()
 
-    plt.show()
 
+    ###############################################################################################
+    # RK4 method
+
+    rk4_solved = rk4_method(START_VALS)
+    rk4_coords = unpack(rk4_solved)
+
+    plt.plot(rk4_coords[0], rk4_coords[1], marker = "", c = (.8, .1, .3), label = "RK4 method")
+    plt.legend()
+
+
+
+
+    plt.show()
 
 
     ###############################################################################################

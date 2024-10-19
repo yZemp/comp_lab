@@ -4,9 +4,9 @@ import matplotlib.pyplot as plt
 ######################################################################################
 # Useful vars
 
-H0 = .01 # Default precision of step
+H0 = .001 # Default precision of step
 FINAL_TIME = 100 # Default length of approximation
-
+START_VALS = (0., 0., 1.) # Starting values for x, y, z
 
 def unpack(arr):
     '''
@@ -44,7 +44,7 @@ def rk2_f(x, y, z, h):
     '''
     This represent phi of rk2's method
     
-    NOTE: making argument like that instead of (Y) or (Y, h) is for simplicity's sake
+    NOTE: passing (x, y, z, h) instead of (Y) or (Y, h) is for compatibility's take
     '''
 
     return f(x + .5 * h, y + .5 * h * f(x, y, z, h), z, h)
@@ -125,6 +125,45 @@ def rk2_method(Y0, h = H0, final_time = FINAL_TIME):
     return steps
 
 
+def plot_errors(h0 = 1, hf = .01, time = FINAL_TIME):
+    '''
+    Plot errors at fixed time
+    as a function of h 
+    '''
+
+    arrh = np.logspace(h0, hf, endpoint = True, base = 2) - 1
+    # print(arrh)
+
+
+    euler_err = []
+    rk2_err = []
+
+    for h in arrh:
+        euler_solved = euler_method(START_VALS, h = h)
+        euler_coords = unpack(euler_solved)
+
+        rk2_solved = rk2_method(START_VALS, h = h)
+        rk2_coords = unpack(rk2_solved)
+
+
+        euler_err.append(np.sum([abs(solution(euler_coords[0][i]) - euler_coords[1][i]) for i in range(len(euler_coords[0]))]))
+        rk2_err.append(np.sum([abs(solution(rk2_coords[0][i]) - rk2_coords[1][i]) for i in range(len(rk2_coords[0]))]))
+        
+
+    plt.plot(arrh, euler_err, c = (.1, .7, .1), label = "Euler errors")
+    plt.plot(arrh, rk2_err, c =  (.1, .1, .9), label = "RK2 errors")
+
+    plt.yscale("log")
+    plt.xscale("log")
+    ax = plt.gca()
+    ax.xaxis.set_inverted(True)
+
+    plt.legend()
+    plt.show()
+
+
+
+
 if __name__ == "__main__":
 
     arrx = np.linspace(0., FINAL_TIME, 10_000)
@@ -133,7 +172,7 @@ if __name__ == "__main__":
     ###############################################################################################
     # Euler method
 
-    euler_solved = euler_method((0., 0., 1.))
+    euler_solved = euler_method(START_VALS)
     euler_coords = unpack(euler_solved)
 
     plt.plot(euler_coords[0], euler_coords[1], c = (.1, .7, .1), label = "Euler method")
@@ -143,9 +182,17 @@ if __name__ == "__main__":
     ###############################################################################################
     # RK2 method
 
-    rk2_solved = rk2_method((0., 0., 1.))
+    rk2_solved = rk2_method(START_VALS)
     rk2_coords = unpack(rk2_solved)
 
     plt.plot(rk2_coords[0], rk2_coords[1], c = (.1, .1, .9), label = "RK2 method")
     plt.legend()
+
     plt.show()
+
+
+
+    ###############################################################################################
+    # Errors
+
+    plot_errors()

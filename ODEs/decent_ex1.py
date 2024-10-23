@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 # Useful vars
 
 H0 = .001 # Default precision of step
-FINAL_TIME = 100 # Default length of approximation
+FINAL_TIME = 10 # Default length of approximation
 START_VALS = (0., 0., 1.) # Starting values for x, y, z
 
 def unpack(arr):
@@ -37,7 +37,7 @@ def f(x, y, z, h):
 
     NOT TO BE CONFUSED WITH _F(Y)
 
-    NOTE: passing (x, y, z, h) instead of (Y) or (Y, h) is for compatibility's take
+    NOTE: passing (x, y, z, h) instead of (Y) or (Y, h) is for compatibility's sake
     '''
 
     return - y
@@ -47,7 +47,7 @@ def rk2_f(x, y, z, h):
     '''
     This represent phi of rk2's method
     
-    NOTE: passing (x, y, z, h) instead of (Y) or (Y, h) is for compatibility's take
+    NOTE: passing (x, y, z, h) instead of (Y) or (Y, h) is for compatibility's sake
     '''
 
     return f(x + .5 * h, y + .5 * h * f(x, y, z, h), z, h)
@@ -57,7 +57,7 @@ def rk4_f(x, y, z, h):
     '''
     This represent phi of rk2's method
     
-    NOTE: passing (x, y, z, h) instead of (Y) or (Y, h) is for compatibility's take
+    NOTE: passing (x, y, z, h) instead of (Y) or (Y, h) is for compatibility's sake
     '''
 
     k1 = f(x, y, z, h)
@@ -68,30 +68,15 @@ def rk4_f(x, y, z, h):
     return (1 / 6) * (k1 + 2 * k2 + 2 * k3 + k4)
 
 
-
-
-def _F(Y, phi, h):
-    '''
-    This represent a vectorial function
-    accepts a vector and returns a vector
-    its the change rate of Y for every step
-
-    NOT TO BE CONFUSED WITH f(x, y)
-    '''
-
-    return np.array([1, Y[2], phi(Y[0], Y[1], Y[2], h)], dtype = np.float128)
-
-
-
 def _step(Y, h, phi):
     '''
-    This is a "stepper" for one-step methods
-    returns Y + h * _F(Y)
+    This is a vectorial "stepper" for one-step methods
+    returns Y + h * phi(Y)
     where 
-        _F is a generic function of Y that approximate the solution
-            _F is a function of phi
+        phi is a generic function of Y, h, f that approximate the solution
             NOTE: with phi = f we have Euler's method
             NOTE: with phi = rk2_f we have RK2 method
+            NOTE: with phi = rk4_f we have RK4 method
         Y can be decomposed in (x, y, z)
             where:
                 x = time
@@ -99,7 +84,9 @@ def _step(Y, h, phi):
                 z = derivative of y (only needed to calculate next Y)
     '''
 
-    return(Y + h * _F(Y, phi, h))
+    step = np.array([1, Y[2], phi(Y[0], Y[1], Y[2], h)], dtype = np.float128)
+
+    return (Y + h * step)
 
 
 
@@ -141,7 +128,7 @@ def rk2_method(Y0, h = H0, final_time = FINAL_TIME):
 
     # Computing steps
     while steps[-1][0] < final_time:
-        # NOTE: passing rk2_f to _F (through the stepper) means we are using RK2's method
+        # NOTE: passing rk2_f to _F (through the stepper) means we are using the RK2 method
         new_Y = _step(steps[-1], h, rk2_f)
         steps.append(new_Y)
     
@@ -164,7 +151,7 @@ def rk4_method(Y0, h = H0, final_time = FINAL_TIME):
 
     # Computing steps
     while steps[-1][0] < final_time:
-        # NOTE: passing rk2_f to _F (through the stepper) means we are using RK2's method
+        # NOTE: passing rk4_f to _F (through the stepper) means we are using the RK4 method
         new_Y = _step(steps[-1], h, rk4_f)
         steps.append(new_Y)
     
@@ -181,7 +168,8 @@ def error_comparison(h0 = 1, hf = .01, time = FINAL_TIME):
         Sum of all errors since t0 to final time 
     '''
 
-    arrh = np.logspace(h0, hf, endpoint = True, base = 2, num = 500) - 1
+    arrh = np.logspace(h0, hf, endpoint = True, base = 2, num = 1_000) - 1
+    # arrh = np.linspace(h0, hf, endpoint = True, num = 1_000)
     # print(arrh)
 
 
@@ -209,9 +197,9 @@ def error_comparison(h0 = 1, hf = .01, time = FINAL_TIME):
         rk2_err.append(np.sum([abs(solution(rk2_coords[0][i]) - rk2_coords[1][i]) for i in range(len(rk2_coords[0]))]))
         rk4_err.append(np.sum([abs(solution(rk4_coords[0][i]) - rk4_coords[1][i]) for i in range(len(rk4_coords[0]))]))
         
-        euler_err_fixed.append(solution(euler_coords[0][-1]) - euler_coords[1][-1])
-        rk2_err_fixed.append(solution(rk2_coords[0][-1]) - rk2_coords[1][-1])
-        rk4_err_fixed.append(solution(rk4_coords[0][-1]) - rk4_coords[1][-1])
+        euler_err_fixed.append(abs(solution(euler_coords[0][-1]) - euler_coords[1][-1]))
+        rk2_err_fixed.append(abs(solution(rk2_coords[0][-1]) - rk2_coords[1][-1]))
+        rk4_err_fixed.append(abs(solution(rk4_coords[0][-1]) - rk4_coords[1][-1]))
 
 
     fig, ax = plt.subplots(2)
@@ -221,8 +209,8 @@ def error_comparison(h0 = 1, hf = .01, time = FINAL_TIME):
     ax[0].plot(arrh, rk4_err, c =  (.8, .1, .3), label = "RK4")
 
     ax[0].set_title("Error sum")
-    ax[0].set_yscale("log")
-    ax[0].set_xscale("log")
+    # ax[0].set_yscale("log")
+    # ax[0].set_xscale("log")
     ax[0].xaxis.set_inverted(True)
 
     ax[0].legend()
@@ -234,8 +222,8 @@ def error_comparison(h0 = 1, hf = .01, time = FINAL_TIME):
     ax[1].plot(arrh, rk2_err_fixed, c =  (.1, .1, .9), label = "RK2")
     ax[1].plot(arrh, rk4_err_fixed, c =  (.8, .1, .3), label = "RK4")
 
-    ax[1].set_yscale("log")
-    ax[1].set_xscale("log")
+    # ax[1].set_yscale("log")
+    # ax[1].set_xscale("log")
     ax[1].xaxis.set_inverted(True)
 
     ax[1].legend()

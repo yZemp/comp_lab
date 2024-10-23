@@ -33,46 +33,51 @@ def solution(x):
     return np.sin(x)
 
 
-def f(x, y, z, h):
+def known(x, y):
     '''
-    This represent known element of the differential equation
+    This represent known value of the differential equation
+    Should be called f, but it conflicts
+    '''
+    return - y
 
-    incidentally:
-    This represent phi of euler's method
 
-    NOTE: passing (x, y, z, h) instead of (Y) or (Y, h) is for compatibility's sake
+def euler_f(x, y, z, h, f):
+    '''
+    This represent phi of euler's method (it is the same as f, but not conceptually)
+
+    NOTE: passing (x, y, z, h, f) instead of (Y) or (Y, h) is for compatibility's sake
     '''
 
     return - y
 
 
-def rk2_f(x, y, z, h):
+def rk2_f(x, y, z, h, f):
     '''
     This represent phi of rk2 method
     
-    NOTE: passing (x, y, z, h) instead of (Y) or (Y, h) is for compatibility's sake
+    NOTE: passing (x, y, z, h, f) instead of (Y) or (Y, h) is for compatibility's sake
     '''
 
-    return f(x + .5 * h, y + .5 * h * f(x, y, z, h), z, h)
+    return f(x + .5 * h, y + .5 * h * f(x, y))
 
 
-def rk4_f(x, y, z, h):
+def rk4_f(x, y, z, h, f):
     '''
     This represent phi of rk4 method
     
-    NOTE: passing (x, y, z, h) instead of (Y) or (Y, h) is for compatibility's sake
+    NOTE: passing (x, y, z, h, f) instead of (Y) or (Y, h) is for compatibility's sake
     '''
 
-    k1 = f(x, y, z, h)
-    k2 = f(x + .5 * h, y + .5 * h * k1, z, h)
-    k3 = f(x + .5 * h, y + .5 * h * k2, z, h)
-    k4 = f(x + h, y + h * k3, z, h)
+    k1 = f(x, y)
+    k2 = f(x + .5 * h, y + .5 * h * k1)
+    k3 = f(x + .5 * h, y + .5 * h * k2)
+    k4 = f(x + h, y + h * k3)
 
     return (1 / 6) * (k1 + 2 * k2 + 2 * k3 + k4)
 
 
 
-def _step(Y, h, phi):
+def _step(Y, h, phi, f):
     '''
     This is a vectorial "stepper" for one-step methods
     returns Y + h * phi(Y)
@@ -88,13 +93,13 @@ def _step(Y, h, phi):
                 z = derivative of y (only needed to calculate next Y)
     '''
 
-    step = np.array([1, Y[2], phi(Y[0], Y[1], Y[2], h)], dtype = np.float128)
+    step = np.array([1, Y[2], phi(Y[0], Y[1], Y[2], h, f)], dtype = np.float128)
 
     return Y + h * step
 
 
 
-def euler_method(Y0, h = H0, final_time = FINAL_TIME):
+def euler_method(Y0, h = H0, final_time = FINAL_TIME, f = known):
     '''
     Approximate the differential equation with known value f(x, y)
     Using Euler's method
@@ -111,13 +116,13 @@ def euler_method(Y0, h = H0, final_time = FINAL_TIME):
     # Computing steps
     for i in range(int(final_time / h)):
         # NOTE: passing f to _F (through the stepper) means we are using Euler's method
-        new_Y = _step(steps[-1], h, f)
+        new_Y = _step(steps[-1], h, euler_f, f)
         steps.append(new_Y)
     
     return steps
 
 
-def rk2_method(Y0, h = H0, final_time = FINAL_TIME):
+def rk2_method(Y0, h = H0, final_time = FINAL_TIME, f = known):
     '''
     Approximate the differential equation with known value f(x, y)
     Using RK2 algorithm
@@ -134,14 +139,14 @@ def rk2_method(Y0, h = H0, final_time = FINAL_TIME):
     # Computing steps
     for i in range(int(final_time / h)):
         # NOTE: passing rk2_f to _F (through the stepper) means we are using the RK2 method
-        new_Y = _step(steps[-1], h, rk2_f)
+        new_Y = _step(steps[-1], h, rk2_f, f)
         steps.append(new_Y)
     
     return steps
 
 
 
-def rk4_method(Y0, h = H0, final_time = FINAL_TIME):
+def rk4_method(Y0, h = H0, final_time = FINAL_TIME, f = known):
     '''
     Approximate the differential equation with known value f(x, y)
     Using RK4 algorithm
@@ -158,7 +163,7 @@ def rk4_method(Y0, h = H0, final_time = FINAL_TIME):
     # Computing steps
     for i in range(int(final_time / h)):
         # NOTE: passing rk4_f to _F (through the stepper) means we are using the RK4 method
-        new_Y = _step(steps[-1], h, rk4_f)
+        new_Y = _step(steps[-1], h, rk4_f, f)
         steps.append(new_Y)
     
     return steps

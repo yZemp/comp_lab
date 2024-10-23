@@ -51,6 +51,7 @@ def euler_f(x, y, z, h, f):
     return - y
 
 
+
 def rk2_f(x, y, z, h, f):
     '''
     This represent phi of rk2 method
@@ -59,6 +60,7 @@ def rk2_f(x, y, z, h, f):
     '''
 
     return f(x + .5 * h, y + .5 * h * f(x, y))
+
 
 
 def rk4_f(x, y, z, h, f):
@@ -256,6 +258,19 @@ def error_comparison(h0 = 1, hf = .01, time = FINAL_TIME):
 
 
 if __name__ == "__main__":
+    '''
+    Solve the simple system:
+        y_dot_dot = f(x, y)
+
+    That can be rewritten in
+        y_dot = z
+        z_dot = f(x, y)
+
+    For every step, Y is the vector (x, y, z) with
+        x = time
+        y = height of point
+        z = first derivative of y
+    '''
 
     arrx = np.linspace(0., FINAL_TIME, 10_000)
     plt.plot(arrx, solution(arrx), c = (.1, .1, .1), marker = "", label = "Analytical solution")

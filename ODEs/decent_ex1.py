@@ -81,7 +81,7 @@ def rk4_f(x, y, z, h, f):
 
 def _step(Y, h, phi, f):
     '''
-    This is a vectorial "stepper" for one-step methods
+    This is a vectorial "stepper" for one-step methods (simple system case)
     returns Y + h * phi(Y)
     where 
         phi is a generic function of Y, h, f that approximate the solution

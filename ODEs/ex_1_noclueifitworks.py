@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+from my_odelib import unpack
 
 ######################################################################################
 # Useful vars
@@ -7,25 +8,6 @@ import matplotlib.pyplot as plt
 H0 = .09 # Default precision of step
 FINAL_TIME = 10 # Default length of approximation
 START_VALS = (0., 0., 1.) # Starting values for x, y, z
-
-def unpack(arr):
-    '''
-    Receives array or array-like of n-dim vectors
-    returns n arrays of coordinates
-
-    Example: 
-        arr = [[x0, y0, z0], [x1, y1, z1], [x2, y2, z2]]
-        returns: [[x0, x1, x2], [y0, y1, y2], [x2, y2, z2]]
-    '''
-    coords = [[] for i in range(len(arr[0]))]
-
-    for i in range(len(arr[0])):
-        for j, el in enumerate(arr):
-            # print(i, j)
-            coords[i].append(arr[j][i])
-
-    # print(coords)
-    return coords
 
 
 # Analytical solution

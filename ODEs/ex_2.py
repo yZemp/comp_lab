@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.ticker as tck
 
-from decent_ex1 import rk4_method, unpack
+from ODEs.ex_1_noclueifitworks import rk4_method, unpack
 
 ######################################################################################
 # Useful vars

@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+from my_odelib import unpack
 
 ######################################################################################
 # Useful vars
@@ -10,25 +11,6 @@ STEPS_NUMBER = 5_000 # Default steps number
 START_VALS = (0., 0., 1.) # Starting values for t, z1, z2, ... , zN
 gamma = .6
 A = 1.4
-
-def unpack(arr):
-    '''
-    Receives array or array-like of n-dim vectors
-    returns n arrays of coordinates
-
-    Example: 
-        arr = [[x0, y0, z0], [x1, y1, z1], [x2, y2, z2]]
-        returns: [[x0, x1, x2], [y0, y1, y2], [x2, y2, z2]]
-    '''
-    coords = [[] for i in range(len(arr[0]))]
-
-    for i in range(len(arr[0])):
-        for j, el in enumerate(arr):
-            # print(i, j)
-            coords[i].append(arr[j][i])
-
-    # print(coords)
-    return coords
 
 
 # Analytical solution
@@ -91,7 +73,7 @@ def solve(Y0, final_time = FINAL_TIME, h = H0, steps_number = -1, phi = euler_ph
     Y0 should be an array-like of the form: [t_0, z1_0, ... , zN_0, zN_dot_0]
 
     Using:
-        phi = f means Euler's method
+        phi = euler_phi means Euler's method
     '''
 
     steps_number = int(final_time / h) if steps_number == -1 else steps_number

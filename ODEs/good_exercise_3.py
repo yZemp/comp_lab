@@ -85,7 +85,7 @@ if __name__ == "__main__":
 
         if i == 2:
             fig = plt.figure()
-            ax = plt.axes(projection='3d')
+            ax = plt.axes(projection = "3d")
             
             x, y, z = coords[1], coords[2], coords[3]
             ax.plot3D(x, y, z, c = colors[i])

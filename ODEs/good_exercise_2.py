@@ -11,7 +11,7 @@ FINAL_TIME = 300 # Default length of approximation
 STEPS_NUMBER = 5_000 # Default steps number
 START_VALS = [0., np.array([0., 1.])] # Starting values for t, theta, phi
 gamma = .2
-A = 1.8
+A = .2
 
 def f1(t, Y):
     '''
@@ -96,5 +96,5 @@ if __name__ == "__main__":
         ax[2].plot(coords[2], coords[1], c = (.5, .1, .8))
 
         plt.suptitle(f"{fun.__name__}")
-        plt.savefig(f"ex_2_graphs/ex2_{fun.__name__}.png")
+        # plt.savefig(f"ex_2_graphs/ex2_{fun.__name__}.png")
         plt.show()

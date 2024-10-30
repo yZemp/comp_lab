@@ -6,10 +6,10 @@ import random
 ######################################################################################
 # Useful vars
 
-H0 = .005 # Default precision of step
+H0 = .002 # Default precision of step
 FINAL_TIME = 30 # Default length of approximation
-STEPS_NUMBER = 5_000 # Default steps number
-START_VALS = [0., np.array([1., 1., .1])] # Starting values for t, x, y, z
+STEPS_NUMBER = 10_000 # Default steps number
+START_VALS = [0., np.array([7., 12., 15.])] # Starting values for t, x, y, z
 
 def f(t, Y):
     '''
@@ -80,6 +80,13 @@ if __name__ == "__main__":
         ax[2].plot(coords[2], coords[3], c = colors[i])
 
         plt.suptitle(f"{fun_step.__name__}")
-        plt.savefig(f"ex_3_graphs/ex3_{fun_step.__name__}.png")
+        # plt.savefig(f"ex_3_graphs/ex3_{fun_step.__name__}.png")
         plt.show()
 
+        if i == 2:
+            fig = plt.figure()
+            ax = plt.axes(projection='3d')
+            
+            x, y, z = coords[1], coords[2], coords[3]
+            ax.plot3D(x, y, z, c = colors[i])
+            plt.show()     

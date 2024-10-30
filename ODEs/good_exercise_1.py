@@ -8,7 +8,7 @@ import random
 
 H0 = .01 # Default precision of step
 FINAL_TIME = 30 # Default length of approximation
-STEPS_NUMBER = 2_000 # Default steps number
+STEPS_NUMBER = 5_000 # Default steps number
 START_VALS = [0., np.array([0., 1.])] # Starting values for t, theta, phi
 
 # Analytical solution
@@ -95,21 +95,23 @@ if __name__ == "__main__":
     plt.title("EX. 1.: solutions")
     plt.ylim(-2, 2)
     plt.legend()
-    plt.show()
     plt.savefig("ex_1_graphs/ex_1_1.png")
+    plt.show()
 
 
     ###############################################################################################
     # EX. 2)
 
 
-    arrh = np.logspace(1, .01, endpoint = True, base = 2, num = 300) - 1
+    # arrh = np.logspace(.5, .01, endpoint = True, base = 2, num = 300) - 1
+    arrh = np.geomspace(.5, .01, endpoint = True, num = 200)
 
     euler_errs = []
     rk2_errs = []
     rk4_errs = []
     
     for h in arrh:    
+        print(h)
 
         euler_coords = unpack_V2(solve(START_VALS, func = f, step = euler_step, h = h))
         rk2_coords = unpack_V2(solve(START_VALS, func = f, step = rk2_step, h = h))
@@ -131,5 +133,5 @@ if __name__ == "__main__":
     plt.gca().invert_xaxis()
     plt.title("EX. 2.: errors")
     plt.legend()
-    plt.show()
     plt.savefig("ex_1_graphs/ex_1_2.png")
+    plt.show()

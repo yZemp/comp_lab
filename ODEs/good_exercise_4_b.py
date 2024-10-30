@@ -7,26 +7,8 @@ from my_odelib import unpack_V2
 
 H0 = .005 # Default precision of step
 FINAL_TIME = 30 # Default length of approximation
-STEPS_NUMBER = 10_000 # Default steps number
+STEPS_NUMBER = 31_600 # Default steps number NOTE: THIS IS FINE TUNED
 colors = [(.5, .1, .8), (.5, .8, .1), (.8, .1, .5)]
-
-# # STARTING_VALS ONE
-# m0 = .3
-# m1 = .3
-# m2 = .3
-
-# m = np.array([m0, m1, m2])
-
-# r0_0 = np.array([1, 0, 0], dtype = np.float128)
-# r1_0 = np.array([-1, 0, 0], dtype = np.float128)
-# r2_0 = np.array([0, 0, 0], dtype = np.float128)
-
-# v0_0 = np.array([0, .15, -.15], dtype = np.float128)
-# v1_0 = np.array([0, -.15, .15], dtype = np.float128)
-# v2_0 = np.array([0, 0, 0], dtype = np.float128)
-
-# START_VALS = [0., np.array([r0_0, r1_0, r2_0, v0_0, v1_0, v2_0])] # Starting values for t, x, y, z, x_dot, y_dot, z_dot
-
 
 # STARTING_VALS TWO
 m0 = 1.6
@@ -149,7 +131,7 @@ if __name__ == "__main__":
         
         plt.title(f"Evolution of motion on plane {j + 1}")
         for i, r_ in enumerate(r):
-            plt.plot(r_[_cycle(j)], r_[_cycle(j + 1)], c = colors[i], label = f"Body {i}")
+            plt.plot(r_[_cycle(j)], r_[_cycle(j + 1)], c = colors[i], label = f"Body {i + 1}")
             
             plt.legend()
         plt.show()
@@ -164,7 +146,3 @@ if __name__ == "__main__":
         x, y, z = r_[0], r_[1], r_[2]
         ax.plot3D(x, y, z, c = colors[i])
     plt.show()
-            
-
-    # plt.suptitle(f"{fun_step.__name__}")
-    # plt.savefig(f"ex_3_graphs/ex3_{fun_step.__name__}.png")

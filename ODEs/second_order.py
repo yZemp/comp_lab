@@ -1,12 +1,13 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from my_odelib import unpack_V2
+import random
 
 ######################################################################################
 # Useful vars
 
 H0 = .01 # Default precision of step
-FINAL_TIME = 50 # Default length of approximation
+FINAL_TIME = 300 # Default length of approximation
 STEPS_NUMBER = 5_000 # Default steps number
 START_VALS = [0., np.array([0., 1.])] # Starting values for t, theta, phi
 gamma = .3
@@ -14,6 +15,7 @@ A = 1.2
 
 
 # Analytical solution
+# def solution(t): return 4 * np.arctan(np.exp(t))
 # def solution(t): return np.sin(t)
 
 def f1(t, Y):
@@ -42,23 +44,27 @@ def f3(t, Y):
 
     return np.array([Y[1], - np.sin(Y[0]) - gamma * Y[1] + A * np.sin((2 / 3) * t)])
 
+
 def euler_step(t, Y, h, known):
     return known(t, Y)
 
+def rk2_step(t, Y, h, known):
+    k1 = known(t, Y)
+    k2 = known(t + .5 * h, Y + .5 * h * k1)
+    return k2
 
 def solve(Y0, func, N = STEPS_NUMBER, final_time = FINAL_TIME, step = euler_step):
     
     steps = [Y0]
 
-    h = final_time / N
+    # h = final_time / N
+    h = H0
 
-    for _ in range(N):
+    while True:
         t, Y = steps[-1][0], steps[-1][1]
+        if t > final_time: return steps
         new_step = [t + h, Y + h * step(t, Y, h, known = func)]
         steps.append(new_step)
-
-    return steps
-
 
 
 if __name__ == "__main__":
@@ -75,12 +81,11 @@ if __name__ == "__main__":
         theta = height of point
         phi = first derivative of theta
 
-    NOTE: f1, f2, f3 does NOT represent different known part of a differential system, but three different exercices
+    NOTE: f1, f2, f3 does NOT represent different known parts of a differential system, but three different exercices
     '''
 
 
     arrx = np.linspace(0., STEPS_NUMBER * H0, 10_000)
-    # plt.plot(arrx, solution(arrx), c = (.1, .1, .1), marker = "", label = "Analytical solution") # I DONT HAVE IT :(
 
     funcs = [f1, f2, f3]
 
@@ -88,9 +93,23 @@ if __name__ == "__main__":
     fig, ax = plt.subplots(len(funcs))
     fig.set_size_inches(20, 10, forward = True)
 
+    random.seed(.1)
+    data = []
+    for i in range(10):
+        data.append([random.random() * 2, random.random() * 2])
+
     for i, fun in enumerate(funcs):
-        euler_coords = unpack_V2(solve(START_VALS, func = fun))
-        ax[i].plot(euler_coords[0], euler_coords[1], label = f"Euler solution for {f1.__name__}")
-        ax[i].legend()
-    
+        for g, a in data:
+            gamma = g
+            A = a
+            euler_coords = unpack_V2(solve(START_VALS, func = fun, step = rk2_step))
+            ax[i].plot(euler_coords[0], euler_coords[1])
+        ax[i].set_title(f"Rk2 solution for {fun.__name__}")
+
+    # ax[0].plot(arrx, solution(arrx), c = (.1, .1, .1), marker = "", label = "Analytical solution") # I DONT HAVE IT :(
+
+    ax[0].set_ylim(-20, 20)
+    ax[1].set_ylim(-.20, .20)
+    ax[2].set_ylim(-5, 5)
+    plt.savefig("ex_2_graphs/ex2_rk2.png")
     plt.show()

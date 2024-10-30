@@ -10,13 +10,8 @@ H0 = .01 # Default precision of step
 FINAL_TIME = 300 # Default length of approximation
 STEPS_NUMBER = 5_000 # Default steps number
 START_VALS = [0., np.array([0., 1.])] # Starting values for t, theta, phi
-gamma = .3
-A = 1.2
-
-
-# Analytical solution
-# def solution(t): return 4 * np.arctan(np.exp(t))
-# def solution(t): return np.sin(t)
+gamma = .2
+A = 1.8
 
 def f1(t, Y):
     '''
@@ -45,14 +40,6 @@ def f3(t, Y):
     return np.array([Y[1], - np.sin(Y[0]) - gamma * Y[1] + A * np.sin((2 / 3) * t)])
 
 
-def euler_step(t, Y, h, known):
-    return known(t, Y)
-
-def rk2_step(t, Y, h, known):
-    k1 = known(t, Y)
-    k2 = known(t + .5 * h, Y + .5 * h * k1)
-    return k2
-
 def rk4_step(t, Y, h, known):
     k1 = known(t, Y)
     k2 = known(t + .5 * h, Y + .5 * h * k1)
@@ -61,19 +48,19 @@ def rk4_step(t, Y, h, known):
     return (1 / 6) * (k1 + 2 * k2 + 2 * k3 + k4)
 
 
-def solve(Y0, func, N = STEPS_NUMBER, final_time = FINAL_TIME, step = euler_step):
+def solve(Y0, func, N = STEPS_NUMBER, final_time = FINAL_TIME, step = rk4_step):
     
     steps = [Y0]
 
     # h = final_time / N
     h = H0
 
-    while True:
+    for _ in range(N):
         t, Y = steps[-1][0], steps[-1][1]
-        if t > final_time: return steps
         new_step = [t + h, Y + h * step(t, Y, h, known = func)]
         steps.append(new_step)
 
+    return steps
 
 if __name__ == "__main__":
     '''
@@ -93,35 +80,21 @@ if __name__ == "__main__":
     '''
 
 
-    funcs_step = [euler_step, rk2_step, rk4_step]
+    arrx = np.linspace(0., STEPS_NUMBER * H0, 10_000)
 
-    for funstep in funcs_step: 
-
-        arrx = np.linspace(0., STEPS_NUMBER * H0, 10_000)
-
-        funcs = [f1, f2, f3]
+    funcs = [f1, f2, f3]
 
 
-        fig, ax = plt.subplots(len(funcs))
+    for i, fun in enumerate(funcs):
+        fig, ax = plt.subplots(3)
         fig.set_size_inches(20, 10, forward = True)
+        
+        coords = unpack_V2(solve(START_VALS, func = fun, step = rk4_step))
+        
+        ax[0].plot(coords[0], coords[1], c = (.5, .1, .8))
+        ax[1].plot(coords[0], coords[2], c = (.5, .1, .8))
+        ax[2].plot(coords[2], coords[1], c = (.5, .1, .8))
 
-        random.seed(.1)
-        data = []
-        for i in range(10):
-            data.append([random.random() * 2, random.random() * 2])
-
-        for i, fun in enumerate(funcs):
-            for g, a in data:
-                gamma = g
-                A = a
-                coords = unpack_V2(solve(START_VALS, func = fun, step = funstep))
-                ax[i].plot(coords[0], coords[1])
-            ax[i].set_title(f"{funstep.__name__} solution for {fun.__name__}")
-
-        # ax[0].plot(arrx, solution(arrx), c = (.1, .1, .1), marker = "", label = "Analytical solution") # I DONT HAVE IT :(
-
-        ax[0].set_ylim(-20, 20)
-        ax[1].set_ylim(-.20, .20)
-        ax[2].set_ylim(-5, 5)
-        plt.savefig(f"ex_2_graphs/ex2_{funstep.__name__}.png")
+        plt.suptitle(f"{fun.__name__}")
+        plt.savefig(f"ex_2_graphs/ex2_{fun.__name__}.png")
         plt.show()

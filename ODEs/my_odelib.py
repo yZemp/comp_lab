@@ -28,12 +28,14 @@ def unpack_V2(arr):
         arr = [[t0, [y0, z0]], [t1, [y1, z1]], [t2, [y2, z2]]]
         returns: [[t0, t1, t2], [z0, z1, z2]]
     '''
-    coords = [[] for i in range(len(arr[0]))]
+    coords = [[] for i in range(len(arr[0][1]) + 1)]
 
     for j, el in enumerate(arr):
         # print(i, j)
         coords[0].append(arr[j][0])
         coords[1].append(arr[j][1][0])
+        if len(arr[j][1]) > 1:
+            coords[2].append(arr[j][1][1])
 
     # print(coords)
     return coords

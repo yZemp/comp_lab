@@ -33,9 +33,8 @@ def unpack_V2(arr):
     for j, el in enumerate(arr):
         # print(i, j)
         coords[0].append(arr[j][0])
-        coords[1].append(arr[j][1][0])
-        if len(arr[j][1]) > 1:
-            coords[2].append(arr[j][1][1])
+        for k in range(len(arr[j][1])):
+            coords[k + 1].append(arr[j][1][k])
 
     # print(coords)
     return coords

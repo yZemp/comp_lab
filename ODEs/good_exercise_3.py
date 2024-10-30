@@ -89,4 +89,4 @@ if __name__ == "__main__":
             
             x, y, z = coords[1], coords[2], coords[3]
             ax.plot3D(x, y, z, c = colors[i])
-            plt.show()     
+            plt.show()

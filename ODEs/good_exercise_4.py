@@ -1,17 +1,16 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from my_odelib import unpack_V2
-import random
 
 ######################################################################################
 # Useful vars
 
 H0 = .005 # Default precision of step
 FINAL_TIME = 30 # Default length of approximation
-STEPS_NUMBER = 5_000 # Default steps number
+STEPS_NUMBER = 10_000 # Default steps number
+colors = [(.5, .1, .8), (.5, .8, .1), (.8, .1, .5)]
 
-
-# STARTING_VALS ONE
+# # STARTING_VALS ONE
 # m0 = .3
 # m1 = .3
 # m2 = .3
@@ -29,7 +28,7 @@ STEPS_NUMBER = 5_000 # Default steps number
 # START_VALS = [0., np.array([r0_0, r1_0, r2_0, v0_0, v1_0, v2_0])] # Starting values for t, x, y, z, x_dot, y_dot, z_dot
 
 
-# STARTING_VALS ONE
+# STARTING_VALS TWO
 m0 = 1.6
 m1 = .4
 m2 = .4
@@ -48,6 +47,9 @@ START_VALS = [0., np.array([r0_0, r1_0, r2_0, v0_0, v1_0, v2_0])] # Starting val
 
 
 ############################################################################################3
+
+def _cycle(i, n = 2):
+    return i if i < n else i - (i // (n + 1)) * (n + 1) 
 
 def _frac(ri, rj):
     return (ri - rj) / np.power(np.linalg.norm(ri - rj), 3)
@@ -99,19 +101,70 @@ if __name__ == "__main__":
 
     arrx = np.linspace(0., STEPS_NUMBER * H0, 10_000)
 
-    colors = [(.5, .1, .8), (.5, .8, .1), (.8, .1, .5)]
-
-    fig, ax = plt.subplots()
-    fig.set_size_inches(20, 10, forward = True)
-
     coords = unpack_V2(solve(START_VALS, func = f))
-    # print(len(coords[4]))
+    '''
+    coords should be:
+        [arr_t, arr_r0, arr_r1, arr_r2, arr_v0, arr_v1, arr_v2]
+        where
+            arr_t is array of scalars
+            others are array of 3-dim array (vectors coordinates)
+    '''  
 
-    ax.plot(coords[1], coords[4], c = colors[0], label = "Body 1")
-    ax.plot(coords[2], coords[5], c = colors[1], label = "Body 2")
-    ax.plot(coords[3], coords[6], c = colors[2], label = "Body 3")
+    #######################################################################################
+    # First visualization
+    # for j in [0, 1, 2]:
+    #     fig, ax = plt.subplots(3)
+    #     fig.set_size_inches(20, 10, forward = True)
+        
+    #     for i in [0, 1, 2]:
+    #         ax[i].set_title(f"{i}-nth coord as a function of t")
+    #         ax[i].plot([el for el in coords[0]], [el[i] for el in coords[j + 1]], c = colors[j], label = f"Body {j}")
+    #         ax[i].legend()
+    #     plt.show()
+        
+
+    #######################################################################################
+    # Second visualization
+    r0x = [el[0] for el in coords[1]]
+    r0y = [el[1] for el in coords[1]]
+    r0z = [el[2] for el in coords[1]]
+
+    r1x = [el[0] for el in coords[2]]
+    r1y = [el[1] for el in coords[2]]
+    r1z = [el[2] for el in coords[2]]
+
+    r2x = [el[0] for el in coords[3]]
+    r2y = [el[1] for el in coords[3]]
+    r2z = [el[2] for el in coords[3]]
+    
+    r0 = [r0x, r0y, r0z]
+    r1 = [r1x, r1y, r1z]
+    r2 = [r2x, r2y, r2z]
+
+    r = [r0, r1, r2]
+
+    for j in [0, 1, 2]:
+        fig, ax = plt.subplots()
+        fig.set_size_inches(20, 10, forward = True)
+        
+        plt.title(f"Evolution of motion on plane {j + 1}")
+        for i, r_ in enumerate(r):
+            plt.plot(r_[_cycle(j)], r_[_cycle(j + 1)], c = colors[i], label = f"Body {i}")
+            
+            plt.legend()
+        plt.show()
+
+    fig = plt.figure()
+    ax = plt.axes(projection='3d')
+
+
+    #######################################################################################
+    # Third visualization    
+    for i, r_ in enumerate(r):
+        x, y, z = r_[0], r_[1], r_[2]
+        ax.plot3D(x, y, z, c = colors[i])
+    plt.show()
+            
 
     # plt.suptitle(f"{fun_step.__name__}")
     # plt.savefig(f"ex_3_graphs/ex3_{fun_step.__name__}.png")
-    ax.legend()
-    plt.show()

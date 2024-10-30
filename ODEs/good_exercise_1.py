@@ -6,7 +6,7 @@ import random
 ######################################################################################
 # Useful vars
 
-H0 = .01 # Default precision of step
+H0 = .001 # Default precision of step
 FINAL_TIME = 30 # Default length of approximation
 STEPS_NUMBER = 5_000 # Default steps number
 START_VALS = [0., np.array([0., 1.])] # Starting values for t, theta, phi
@@ -102,9 +102,7 @@ if __name__ == "__main__":
     ###############################################################################################
     # EX. 2)
 
-
-    # arrh = np.logspace(.5, .01, endpoint = True, base = 2, num = 300) - 1
-    arrh = np.geomspace(.5, .01, endpoint = True, num = 200)
+    arrh = np.linspace(.5, .01, endpoint = True, num = 100)
 
     euler_errs = []
     rk2_errs = []
@@ -117,12 +115,9 @@ if __name__ == "__main__":
         rk2_coords = unpack_V2(solve(START_VALS, func = f, step = rk2_step, h = h))
         rk4_coords = unpack_V2(solve(START_VALS, func = f, step = rk4_step, h = h))
 
-        solution_vals = [solution(t) for t in euler_coords[0]]
-
-
-        euler_errs.append(abs(np.array(euler_coords[1][-1]) - np.array(solution_vals[-1])))
-        rk2_errs.append(abs(np.array(rk2_coords[1][-1]) - np.array(solution_vals[-1])))
-        rk4_errs.append(abs(np.array(rk4_coords[1][-1]) - np.array(solution_vals[-1])))
+        euler_errs.append(abs(np.array(euler_coords[1][-1]) - np.array(solution(euler_coords[0][-1]))))
+        rk2_errs.append(abs(np.array(rk2_coords[1][-1]) - np.array(solution(euler_coords[0][-1]))))
+        rk4_errs.append(abs(np.array(rk4_coords[1][-1]) - np.array(solution(euler_coords[0][-1]))))
 
 
     plt.plot(arrh, euler_errs, c = (.8, .2, .1), label = "Euler errors")

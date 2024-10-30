@@ -53,6 +53,14 @@ def rk2_step(t, Y, h, known):
     k2 = known(t + .5 * h, Y + .5 * h * k1)
     return k2
 
+def rk4_step(t, Y, h, known):
+    k1 = known(t, Y)
+    k2 = known(t + .5 * h, Y + .5 * h * k1)
+    k3 = known(t + .5 * h, Y + .5 * h * k2)
+    k4 = known(t + h, Y + h * k3)
+    return (1 / 6) * (k1 + 2 * k2 + 2 * k3 + k4)
+
+
 def solve(Y0, func, N = STEPS_NUMBER, final_time = FINAL_TIME, step = euler_step):
     
     steps = [Y0]
@@ -85,31 +93,35 @@ if __name__ == "__main__":
     '''
 
 
-    arrx = np.linspace(0., STEPS_NUMBER * H0, 10_000)
+    funcs_step = [euler_step, rk2_step, rk4_step]
 
-    funcs = [f1, f2, f3]
+    for funstep in funcs_step: 
+
+        arrx = np.linspace(0., STEPS_NUMBER * H0, 10_000)
+
+        funcs = [f1, f2, f3]
 
 
-    fig, ax = plt.subplots(len(funcs))
-    fig.set_size_inches(20, 10, forward = True)
+        fig, ax = plt.subplots(len(funcs))
+        fig.set_size_inches(20, 10, forward = True)
 
-    random.seed(.1)
-    data = []
-    for i in range(10):
-        data.append([random.random() * 2, random.random() * 2])
+        random.seed(.1)
+        data = []
+        for i in range(10):
+            data.append([random.random() * 2, random.random() * 2])
 
-    for i, fun in enumerate(funcs):
-        for g, a in data:
-            gamma = g
-            A = a
-            euler_coords = unpack_V2(solve(START_VALS, func = fun, step = rk2_step))
-            ax[i].plot(euler_coords[0], euler_coords[1])
-        ax[i].set_title(f"Rk2 solution for {fun.__name__}")
+        for i, fun in enumerate(funcs):
+            for g, a in data:
+                gamma = g
+                A = a
+                euler_coords = unpack_V2(solve(START_VALS, func = fun, step = funstep))
+                ax[i].plot(euler_coords[0], euler_coords[1])
+            ax[i].set_title(f"Rk4 solution for {fun.__name__}")
 
-    # ax[0].plot(arrx, solution(arrx), c = (.1, .1, .1), marker = "", label = "Analytical solution") # I DONT HAVE IT :(
+        # ax[0].plot(arrx, solution(arrx), c = (.1, .1, .1), marker = "", label = "Analytical solution") # I DONT HAVE IT :(
 
-    ax[0].set_ylim(-20, 20)
-    ax[1].set_ylim(-.20, .20)
-    ax[2].set_ylim(-5, 5)
-    plt.savefig("ex_2_graphs/ex2_rk2.png")
-    plt.show()
+        ax[0].set_ylim(-20, 20)
+        ax[1].set_ylim(-.20, .20)
+        ax[2].set_ylim(-5, 5)
+        plt.savefig(f"ex_2_graphs/ex2_{funstep.__name__}.png")
+        plt.show()

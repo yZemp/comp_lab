@@ -102,7 +102,7 @@ if __name__ == "__main__":
     ###############################################################################################
     # EX. 2)
 
-    arrh = np.linspace(.5, .01, endpoint = True, num = 100)
+    arrh = np.linspace(.5, .01, endpoint = True, num = 50)
 
     euler_errs = []
     rk2_errs = []

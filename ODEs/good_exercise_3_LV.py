@@ -15,7 +15,7 @@ B = 1.3
 C = 0.05
 D = 0.07
 prec = 4
-
+epsilon = .6
 
 def f(t, Y):
     '''
@@ -29,6 +29,20 @@ def f(t, Y):
     f2 = - B * y + C * x * y
 
     return np.array([f1, f2])
+
+def f_pesca(t, Y):
+    '''
+    Known term of the ODE system (in terms of t, x, y)
+    args is expected to be (x, y)
+    '''
+
+    x, y = Y
+
+    f1 = A * x - D * x * y - epsilon * x
+    f2 = - B * y + C * x * y - epsilon * y
+
+    return np.array([f1, f2])
+
 
 def euler_step(t, Y, h, known):
     return known(t, Y)
@@ -90,14 +104,27 @@ if __name__ == "__main__":
 
     fig, ax = plt.subplots(1)
     
-    for x in [[x, y] for x in np.linspace(10, 200, num = prec) for y in np.linspace(10, 200, num = prec)]:
+    for x in [[x, y] for x in [2, 5] for y in np.linspace(10, 200, num = prec)]:
         print(x)
         coords = unpack_V2(solve([0., x], func = f, step = fun_step))
         ax.plot(coords[1], coords[2], c = colors[0])
 
+    # plt.xlabel("Prede")
+    # plt.ylabel("Predatori")
+    # plt.suptitle("Phase plane")
+    # plt.savefig(f"ex_3_graphs/LV_phaseplane_{fun_step.__name__}.png")
+    # plt.show()
+
+    
+    # PESCA
+    # fig, ax = plt.subplots(1)
+    
+    for x in [[x, y] for x in [2, 5] for y in np.linspace(10, 200, num = prec)]:
+        print(x)
+        coords = unpack_V2(solve([0., x], func = f_pesca, step = fun_step))
+        ax.plot(coords[1], coords[2], c = colors[1])
+
     plt.xlabel("Prede")
     plt.ylabel("Predatori")
     plt.suptitle("Phase plane")
-    plt.savefig(f"ex_3_graphs/LV_phaseplane_{fun_step.__name__}.png")
     plt.show()
-

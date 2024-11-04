@@ -4,7 +4,7 @@ from my_odelib import unpack_V2
 from good_exercise_4 import simulation
 import sys
 
-H0 = .001
+H0 = .005
 
 def conf_0():
     # STARTING_VALS ZERO

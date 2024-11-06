@@ -42,8 +42,8 @@ if __name__ == "__main__":
     glob_f = np.array([0, 227.04, 362.78, 517.35, 602.97, 901.67])
 
     # Splitting data:
-    start = 2
-    end = 4
+    start = 0
+    end = 6
     x = glob_x[start:end]
     f = glob_f[start:end]
 

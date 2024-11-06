@@ -24,14 +24,17 @@ def _to_upp_triangular(mat, b):
         # print("Inizio:\n", mat, "\n")
         # Find row k > j with largest element in column
         index = j
-        max = 0
+        max_val = abs(mat[j][j])
+
         for l in range(j, len(mat[j])):
-            if mat[l][j] > max:
-                max = mat[l][j]
+            if mat[l][j] > max_val:
+                max_val = mat[l][j]
                 index = l
-        if j == index: continue
-        _gauss_swap(mat, j, index)
-        _gauss_swap(b, j, index)
+        
+        if j != index:    
+            _gauss_swap(mat, j, index)
+            _gauss_swap(b, j, index)
+        
         # print("Fine:\n", mat, "\n")
 
     # Gaussian elimination
@@ -45,7 +48,7 @@ def _to_upp_triangular(mat, b):
             b[i] = _gauss_elim(b[i], b[j], gauss_elim_coeff)
 
     # print("Upper triangular form:")
-    # print(mat, b)
+    # print("\n", mat, "\n", b)
 
     return mat, b
 
@@ -74,21 +77,19 @@ def get_inverse(mat):
     '''
     # Identity
     id = np.array([[1. if i == j else 0. for j in range(len(mat))] for i in range(len(mat))], dtype = float)
-    # print(id)
-
     inverse = np.zeros_like(mat, dtype = float)
 
-    mat, id = _to_upp_triangular(mat, id)
+    # mat, id = _to_upp_triangular(mat, id)
     # print(new_mat, "\n", new_id, "\n")
     
     for i in range(len(mat)):
         # Solving system for every column of the identity
-        col, _, _ = solve_linear_system(mat, [row[i] for row in id])
+        col, _, _ = solve_linear_system(np.copy(mat), np.copy(id[:, i]))
         inverse[:, i] = col
         # print("Inverse:\n", inverse, "\n")
 
     return inverse
-        
+
 def backward_sub(mat, b):
     '''
     Solve system: Ux = b
@@ -134,15 +135,15 @@ def solve_linear_system(mat, vec):
     # print("Linear system to be solved:")
     # print(mat, vec)
     
-    mat, vec = _to_upp_triangular(mat, vec)
+    new_mat, new_vec = _to_upp_triangular(np.copy(mat), np.copy(vec))
     # print("Equivalent upper triangular system:")
     # print(mat, vec)
     
-    x = backward_sub(mat, vec)
+    x = backward_sub(new_mat, new_vec)
     # print("Solution of the system:")
     # print(x)
     
-    return x, mat, vec
+    return x, new_mat, new_vec
 
 def LU_decompose(mat):
     '''

@@ -104,7 +104,7 @@ if __name__ == "__main__":
     ###############################################################################################
     # EX. 2)
 
-    arrh = np.linspace(.5, .01, endpoint = True, num = 50)
+    arrh = np.linspace(.5, .01, endpoint = True, num = 200)
 
     euler_errs = []
     rk2_errs = []
@@ -117,9 +117,13 @@ if __name__ == "__main__":
         rk2_coords = unpack_V2(solve(START_VALS, func = f, step = rk2_step, h = h))
         rk4_coords = unpack_V2(solve(START_VALS, func = f, step = rk4_step, h = h))
 
-        euler_errs.append(abs(np.array(euler_coords[1][-1]) - np.array(solution(euler_coords[0][-1]))))
-        rk2_errs.append(abs(np.array(rk2_coords[1][-1]) - np.array(solution(euler_coords[0][-1]))))
-        rk4_errs.append(abs(np.array(rk4_coords[1][-1]) - np.array(solution(euler_coords[0][-1]))))
+        # euler_errs.append(abs(np.array(euler_coords[1][-1]) - np.array(solution(euler_coords[0][-1]))))
+        # rk2_errs.append(abs(np.array(rk2_coords[1][-1]) - np.array(solution(euler_coords[0][-1]))))
+        # rk4_errs.append(abs(np.array(rk4_coords[1][-1]) - np.array(solution(euler_coords[0][-1]))))
+
+        euler_errs.append(np.max([abs(eta - y) for eta, y in zip(euler_coords[0], euler_coords[1])]))
+        rk2_errs.append(np.max([abs(eta - y) for eta, y in zip(euler_coords[0], rk2_coords[1])]))
+        rk4_errs.append(np.max([abs(eta - y) for eta, y in zip(euler_coords[0], rk4_coords[1])]))
 
 
     plt.plot(arrh, euler_errs, c = (.8, .2, .1), label = "Euler errors")

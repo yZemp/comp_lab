@@ -76,18 +76,19 @@ def get_inverse(mat):
     id = np.array([[1. if i == j else 0. for j in range(len(mat))] for i in range(len(mat))], dtype = float)
     # print(id)
 
-    inverse = np.array([[0. for j in range(len(mat))] for i in range(len(mat))], dtype = float)
+    inverse = np.zeros_like(mat, dtype = float)
 
     mat, id = _to_upp_triangular(mat, id)
+    # print(new_mat, "\n", new_id, "\n")
+    
     for i in range(len(mat)):
         # Solving system for every column of the identity
-        col, _, _ = solve_linear_system(mat, [id_col[i] for id_col in id])
-        for count, el in enumerate(col): inverse[count][i] = el
+        col, _, _ = solve_linear_system(mat, [row[i] for row in id])
+        inverse[:, i] = col
+        # print("Inverse:\n", inverse, "\n")
 
     return inverse
         
-
-
 def backward_sub(mat, b):
     '''
     Solve system: Ux = b

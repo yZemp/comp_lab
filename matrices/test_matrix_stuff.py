@@ -53,7 +53,9 @@ if __name__ == "__main__":
     
     inverse = get_inverse(mat)
 
-    print("Inverse:\n", inverse)
+    print("Inverse:\n", inverse, "\n")
+
+    print("True inverse (numpy):\n", np.linalg.inv(mat), "\n")
 
     print(clear_space)
 

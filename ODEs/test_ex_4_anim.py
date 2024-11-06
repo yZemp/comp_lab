@@ -58,7 +58,7 @@ def conf_2():
 
     r0_0 = np.array([1, 0, 0], dtype = np.float128)
     r1_0 = np.array([-1, 0, 0], dtype = np.float128)
-    r2_0 = np.array([0, 0, 0], dtype = np.float128)
+    r2_0 = np.array([0, 0.1, 0], dtype = np.float128)
 
     v0_0 = np.array([0, .4, 0], dtype = np.float128)
     v1_0 = np.array([0, -.8, .7], dtype = np.float128)

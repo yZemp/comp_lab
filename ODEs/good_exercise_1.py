@@ -69,6 +69,8 @@ if __name__ == "__main__":
         z = first derivative of y
     '''
 
+    # FIXME: No way this stuff is working correctly
+
     euler_coords = unpack_V2(solve(START_VALS, func = f, step = euler_step))
     rk2_coords = unpack_V2(solve(START_VALS, func = f, step = rk2_step))
     rk4_coords = unpack_V2(solve(START_VALS, func = f, step = rk4_step))

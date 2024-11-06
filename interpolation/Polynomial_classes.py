@@ -21,6 +21,10 @@ class Polynomial:
                 self.order = len(coeff)
     
 
+    def __repr__(self):
+        return f"P(x) = " + " + ".join([f"{elem} * x^({i})" for i, elem in enumerate(self.coefficients)])
+
+
     def evaluate(self, x):
         '''
         Evaluates the polynomial at a given point x.
@@ -29,9 +33,7 @@ class Polynomial:
         return: polynomial value at x
         '''
 
-        if self.order == 0:
-            return 1
-        return np.sum([el * np.power(x, i) for i, el in enumerate(self.coefficients)], dtype=np.float128)
+        return np.sum([el * np.power(x, i) for i, el in enumerate(self.coefficients)], dtype = np.float128)
 
 
 
@@ -48,6 +50,9 @@ class Newton_polynomial:
             self.elements = elements
             self.order = len(elements)
     
+    def __repr__(self):
+        return f"n_{self.order} = 1" + "".join([f"(x - {elem})" for elem in self.elements])
+
 
     def evaluate(self, x):
         '''
@@ -59,4 +64,50 @@ class Newton_polynomial:
 
         if self.order == 0:
             return 1
-        return np.prod([x - el for el in self.elements])
+        else:
+            return np.prod([x - el for el in self.elements])
+
+
+
+
+class Newton_interpolator:
+    def __init__(self, dd, newton_poly):
+        '''
+        array: array-like
+
+        Sets up a Newton polynomial with
+            dd, newton_poly array
+            dd are the devided differnces
+            newton_poly are known points
+        
+            Polynomial is: P(x) = f_0 + f_01 (x - x0) + f_012 (x - x0) (x - x1) + f_0123 (x - x0) (x - x1) (x - x2) + ...
+        '''
+
+        try: dd = np.array(dd, dtype = np.float128)
+        except: raise ValueError("Param should be an array-like (dd)")
+        else:
+            self.dd = dd
+    
+        try: newton_poly = np.array(newton_poly)
+        except: raise ValueError("Param should be an array-like (newton_poly)")
+        else:
+            self.newton_poly = newton_poly
+            # self.order = len(newton_poly) - 1
+
+
+    def evaluate(self, x):
+        '''
+        Evaluates the interpolator at a given point x.
+        
+        x: float or array-like
+        return: Interpolated value at x
+        '''
+        
+        # print(self.newton_poly)
+        return  np.sum([f * n.evaluate(x) for f, n in zip(self.dd, self.newton_poly)])
+
+
+
+    
+if __name__ == "__main__":
+    pass

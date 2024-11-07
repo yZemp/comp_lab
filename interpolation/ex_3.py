@@ -15,7 +15,6 @@ from my_interplib import *
 # VARS
 
 INTERVAL = (-1, 1)
-DELTA = 11
 colors = [(.5, .1, .8), (.5, .8, .1), (.8, .1, .5)]
 
 
@@ -43,7 +42,7 @@ def spline(x, f):
     return interp
 
 
-def linear_spline(sample, label, delta):
+def linear_spline(sample, delta, color_index = 1):
     '''
     Perform piecewise interpolation of the runge function, given a specific sample
     '''
@@ -59,6 +58,8 @@ def linear_spline(sample, label, delta):
     # data = [max(next(i for i, xbar in enumerate(sample) if xbar >= x) - 1, 0) for x in arrx]
     # print(data)
     # exit()
+
+    ax.plot(arrx, data, color = colors[color_index], alpha = 1, label = f"Spline {len(sample)}")
 
     return sample, arrx, data, f
 
@@ -79,23 +80,15 @@ if __name__ == "__main__":
     plt.ylim(-1, 2)
     fig.set_size_inches(20, 10, forward = True)
 
-    # ax.scatter(sample, f, color = (.1, .1, .1), label = "Data sample", s = 70, marker = "x")
+    uniform = np.linspace(*INTERVAL, num = 11)
+    sample, arrx, data, f = linear_spline(uniform, 11, color_index = 0)
+    uniform = np.linspace(*INTERVAL, num = 12)
+    sample, arrx, data, f = linear_spline(uniform, 12, color_index = 1)
 
-    start = 6
-    end = 50
+    #TODO: Quadratic spline
 
-    # Showing the convergence
-    for i in np.geomspace(start, end, num = 10):
-        n = int(i)
-        # print(n)
-        uniform = np.linspace(*INTERVAL, num = n)
-        sample, arrx, data, f = linear_spline(uniform, "Uniform", n)
-    
-        if n == start: ax.plot(arrx, runge(arrx), c = (.3, .3, .3), alpha = .1, linewidth = 10, label = "Runge function")
-        ax.plot(arrx, data, color = (.1 * n / 5, 1 - .2 * n / 10, .8), alpha = 1, label = f"Spline {len(sample)}")
-
-            
+    ax.plot(arrx, runge(arrx), c = (.3, .3, .3), alpha = .1, linewidth = 10, label = "Runge function")
 
     plt.legend()
-    plt.savefig(f"interp_graphs/spline")
+    # plt.savefig(f"interp_graphs/ex3_")
     plt.show()

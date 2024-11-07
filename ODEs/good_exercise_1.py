@@ -6,7 +6,7 @@ import random
 ######################################################################################
 # Useful vars
 
-H0 = .001 # Default precision of step
+H0 = .01 # Default precision of step
 FINAL_TIME = 30 # Default length of approximation
 STEPS_NUMBER = 5_000 # Default steps number
 START_VALS = [0., np.array([0., 1.])] # Starting values for t, theta, phi
@@ -20,7 +20,7 @@ def f(t, Y):
     args is expected to be (theta, phi)
     '''
 
-    return np.array([Y[1], - np.sin(Y[0])])
+    return np.array([Y[1], -Y[0]])
 
 
 def euler_step(t, Y, h, known):
@@ -81,22 +81,25 @@ if __name__ == "__main__":
 
     arrx = np.linspace(0., STEPS_NUMBER * H0, 10_000)
 
-    plt.plot(arrx, solution(arrx), c = (.1, .1, .1), marker = "", label = "Analytical solution")
+    fig, ax = plt.subplots(1)
+    fig.set_size_inches(20, 10, forward = True)
+
+    ax.plot(arrx, solution(arrx), c = (.1, .1, .1), marker = "", label = "Analytical solution")
 
 
     # Euler method
-    plt.plot(euler_coords[0], euler_coords[1], marker = "", c = (.1, .7, .1), label = "Euler method")
+    ax.plot(euler_coords[0], euler_coords[1], marker = "", c = (.1, .7, .1), label = "Euler method")
 
     # RK2 method
-    plt.plot(rk2_coords[0], rk2_coords[1], marker = "", c = (.1, .1, .9), label = "RK2 method")
+    ax.plot(rk2_coords[0], rk2_coords[1], marker = "", c = (.1, .1, .9), label = "RK2 method")
 
     # RK4 method
-    plt.plot(rk4_coords[0], rk4_coords[1], marker = "", c = (.8, .1, .3), label = "RK4 method")
+    ax.plot(rk4_coords[0], rk4_coords[1], marker = "", c = (.8, .1, .3), label = "RK4 method")
 
 
     plt.title("EX. 1.: solutions")
     plt.ylim(-2, 2)
-    plt.legend()
+    fig.legend()
     plt.savefig("ex_1_graphs/ex_1_1.png")
     plt.show()
 
@@ -104,7 +107,7 @@ if __name__ == "__main__":
     ###############################################################################################
     # EX. 2)
 
-    arrh = np.linspace(.5, .01, endpoint = True, num = 200)
+    arrh = np.geomspace(1, .01, endpoint = True, num = 50)
 
     euler_errs = []
     rk2_errs = []
@@ -125,14 +128,23 @@ if __name__ == "__main__":
         rk2_errs.append(np.max([abs(eta - y) for eta, y in zip(euler_coords[0], rk2_coords[1])]))
         rk4_errs.append(np.max([abs(eta - y) for eta, y in zip(euler_coords[0], rk4_coords[1])]))
 
+        # euler_errs.append(np.sum([abs(eta - y) for eta, y in zip(euler_coords[0], euler_coords[1])]) / h)
+        # rk2_errs.append(np.sum([abs(eta - y) for eta, y in zip(euler_coords[0], rk2_coords[1])]) / h)
+        # rk4_errs.append(np.sum([abs(eta - y) for eta, y in zip(euler_coords[0], rk4_coords[1])]) / h)
 
-    plt.plot(arrh, euler_errs, c = (.8, .2, .1), label = "Euler errors")
-    plt.plot(arrh, rk2_errs, c = (.1, .8, .2), label = "Rk2 errors")
-    plt.plot(arrh, rk4_errs, c = (.2, .1, .8), label = "Rk4 errors")
+    fig, ax = plt.subplots(1)
+    fig.set_size_inches(20, 10, forward = True)
 
+    ax.plot(arrh, euler_errs, c = (.8, .2, .1), label = "Euler errors")
+    ax.plot(arrh, rk2_errs, c = (.1, .8, .2), label = "Rk2 errors")
+    ax.plot(arrh, rk4_errs, c = (.2, .1, .8), label = "Rk4 errors")
+
+    plt.ylim(10e0, 10e23)
     plt.xlabel("h")
-    plt.gca().invert_xaxis()
+    # ax.gca().invert_xaxis()
     plt.title("EX. 2.: errors")
+    plt.xscale("log")
+    plt.yscale("log")
     plt.legend()
     plt.savefig("ex_1_graphs/ex_1_2.png")
     plt.show()

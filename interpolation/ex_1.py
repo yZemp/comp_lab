@@ -32,7 +32,12 @@ def _arr_divided_diff(arr, x):
 glob_x = np.array([0, 10, 15, 20, 22.5, 30]) # i = 0, 1, 2, 3, 4, 5
 glob_f = np.array([0, 227.04, 362.78, 517.35, 602.97, 901.67])
 
+
 def interp_newton(x, f):
+    '''
+    Perform a Newton interpolation given points with coordinate x, f
+    '''
+    
     f_j = _arr_divided_diff(f, x)
 
     # Building newton polynomial array ([n_0, n_1, n_2, n_3, ..., n_i])
@@ -43,6 +48,8 @@ def interp_newton(x, f):
     newton_interpolator = Newton_interpolator(f_j, newton_poly_arr)
 
     return newton_interpolator
+
+
 
 if __name__ == "__main__":
 
@@ -64,12 +71,13 @@ if __name__ == "__main__":
     ax.scatter(glob_x, glob_f, color = (.9, .1, .1), s = 70, label = "Fixed points", marker = "x")
 
     newton_interpolator = interp_newton(x, f)
-    interpolated = [newton_interpolator.evaluate(el) for el in arrx]
-    ax.plot(arrx, interpolated, color = (.5, .3, .9), label = "Newton fit")
+    newton = [newton_interpolator.evaluate(el) for el in arrx]
+    ax.plot(arrx, newton, color = (.5, .3, .9), label = "Newton interpolation")
 
     # CONFRONTING WITH SIMPLEST FIT
-    lnsp, y = interp_simple(x, f)
-    ax.plot(lnsp, y, c = (.7, .7, .7), alpha = .3, linewidth = 10, label = "Simple fit")
+    interpolator_simple = interp_simple(x, f)
+    simple = [interpolator_simple.evaluate(el) for el in arrx]
+    ax.plot(arrx, simple, c = (.7, .7, .7), alpha = .3, linewidth = 10, label = "Simple interpolation")
 
     plt.legend()
     # plt.ylim(-500, 2_000)

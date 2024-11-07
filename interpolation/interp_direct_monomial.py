@@ -19,21 +19,21 @@ def get_vandermonde_mat(arr):
     return np.array([[np.power(x, i) for i in range(len(arr))] for x in arr])
 
 def interp_simple(x, f):
+    '''
+    Perform a simple interpolation given points with coordinate x, f
+    '''
+    
     vandermonde_mat = get_vandermonde_mat(x)
     anti_vandermonde = get_inverse(vandermonde_mat)
     a = np.dot(anti_vandermonde, f)
-    print(vandermonde_mat, "\n")
-    print(np.linalg.inv(vandermonde_mat), "\n")
-    print(anti_vandermonde, "\n")
-
-    lnsp = np.linspace(-5, 35, 1_000)
+    # print(vandermonde_mat, "\n")
+    # print(np.linalg.inv(vandermonde_mat), "\n")
+    # print(anti_vandermonde, "\n")
 
     # Creation of polynomial to be evaluated
     poly = Polynomial(a)
-    print(a, "\n", poly)
-    # Evaluating polynomial in all of lnsp
-    y = [poly.evaluate(el) for el in lnsp]
-    return lnsp, y
+
+    return poly
 
 
 if __name__ == "__main__":
@@ -49,7 +49,12 @@ if __name__ == "__main__":
 
     plt.scatter(glob_x, glob_f, marker = "x", color = (.9, .1, .1), label = "Fixed points")
 
-    lnsp, y = interp_simple(x, f)
+    lnsp = np.linspace(-5, 35, 1_000)
+
+    interpolator = interp_simple(x, f)
+    # Evaluating polynomial in all of lnsp
+    y = [interpolator.evaluate(el) for el in lnsp]
+    
     plt.plot(lnsp, y, color = (.2, .3, .9), label = "Simplest fit")
 
 

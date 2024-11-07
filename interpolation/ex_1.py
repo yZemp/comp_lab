@@ -1,11 +1,9 @@
 import numpy as np
 import matplotlib.pyplot as plt
-import random as rand
-import scipy.stats as sts
 
 import sys
 sys.path.append("~/Documents/Programming/comp_lab/")
-# from matrices.matrix_utils import get_inverse
+
 from Polynomial_classes import Newton_polynomial, Newton_interpolator
 from interp_direct_monomial import interp_simple
 
@@ -36,8 +34,13 @@ glob_x = np.array([0, 10, 15, 20, 22.5, 30]) # i = 0, 1, 2, 3, 4, 5
 glob_f = np.array([0, 227.04, 362.78, 517.35, 602.97, 901.67])
 
 # Splitting data:
+# NOTE:
+# ex 1.1) start = 2, end = 4
+# ex 1.2) start = 1, end = 4
+# ex 1.3) start = 0, end = 5
+
 start = 0
-end = 6
+end = 5
 x = glob_x[start:end]
 f = glob_f[start:end]
 
@@ -65,7 +68,7 @@ if __name__ == "__main__":
 
     # CONFRONTING WITH SIMPLEST FIT
     lnsp, y = interp_simple(x, f)
-    # ax.plot(lnsp, y, c = (.7, .7, .7), label = "Simple fit")
+    ax.plot(lnsp, y, c = (.7, .7, .7), alpha = .3, linewidth = 10, label = "Simple fit")
 
     plt.legend()
     # plt.ylim(-500, 2_000)

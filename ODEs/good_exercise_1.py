@@ -17,7 +17,7 @@ def solution(t): return np.sin(t)
 def f(t, Y):
     '''
     Known term of the ODE (in terms of t, theta, phi)
-    args is expected to be (theta, phi)
+    Y is expected to be (theta, phi)
     '''
 
     return np.array([Y[1], -Y[0]])
@@ -69,8 +69,6 @@ if __name__ == "__main__":
         z = first derivative of y
     '''
 
-    # FIXME: No way this stuff is working correctly
-
     euler_coords = unpack_V2(solve(START_VALS, func = f, step = euler_step))
     rk2_coords = unpack_V2(solve(START_VALS, func = f, step = rk2_step))
     rk4_coords = unpack_V2(solve(START_VALS, func = f, step = rk4_step))
@@ -107,7 +105,7 @@ if __name__ == "__main__":
     ###############################################################################################
     # EX. 2)
 
-    arrh = np.geomspace(1, .01, endpoint = True, num = 50)
+    arrh = np.geomspace(.3, .001, endpoint = True, num = 50)
 
     euler_errs = []
     rk2_errs = []
@@ -120,17 +118,20 @@ if __name__ == "__main__":
         rk2_coords = unpack_V2(solve(START_VALS, func = f, step = rk2_step, h = h))
         rk4_coords = unpack_V2(solve(START_VALS, func = f, step = rk4_step, h = h))
 
+        # The worst method
         # euler_errs.append(abs(np.array(euler_coords[1][-1]) - np.array(solution(euler_coords[0][-1]))))
         # rk2_errs.append(abs(np.array(rk2_coords[1][-1]) - np.array(solution(euler_coords[0][-1]))))
         # rk4_errs.append(abs(np.array(rk4_coords[1][-1]) - np.array(solution(euler_coords[0][-1]))))
 
-        euler_errs.append(np.max([abs(eta - y) for eta, y in zip(euler_coords[0], euler_coords[1])]))
-        rk2_errs.append(np.max([abs(eta - y) for eta, y in zip(euler_coords[0], rk2_coords[1])]))
-        rk4_errs.append(np.max([abs(eta - y) for eta, y in zip(euler_coords[0], rk4_coords[1])]))
+        # Very good method
+        euler_errs.append(np.max([abs(eta - y) for eta, y in zip(solution(euler_coords[0]), euler_coords[1])]))
+        rk2_errs.append(np.max([abs(eta - y) for eta, y in zip(solution(rk2_coords[0]), rk2_coords[1])]))
+        rk4_errs.append(np.max([abs(eta - y) for eta, y in zip(solution(rk4_coords[0]), rk4_coords[1])]))
 
-        # euler_errs.append(np.sum([abs(eta - y) for eta, y in zip(euler_coords[0], euler_coords[1])]) / h)
-        # rk2_errs.append(np.sum([abs(eta - y) for eta, y in zip(euler_coords[0], rk2_coords[1])]) / h)
-        # rk4_errs.append(np.sum([abs(eta - y) for eta, y in zip(euler_coords[0], rk4_coords[1])]) / h)
+        # Good method
+        # euler_errs.append(np.sum([abs(eta - y) for eta, y in zip(solution(euler_coords[0]), euler_coords[1])]) / h)
+        # rk2_errs.append(np.sum([abs(eta - y) for eta, y in zip(solution(euler_coords[0]), rk2_coords[1])]) / h)
+        # rk4_errs.append(np.sum([abs(eta - y) for eta, y in zip(solution(euler_coords[0]), rk4_coords[1])]) / h)
 
     fig, ax = plt.subplots(1)
     fig.set_size_inches(20, 10, forward = True)
@@ -139,7 +140,7 @@ if __name__ == "__main__":
     ax.plot(arrh, rk2_errs, c = (.1, .8, .2), label = "Rk2 errors")
     ax.plot(arrh, rk4_errs, c = (.2, .1, .8), label = "Rk4 errors")
 
-    plt.ylim(10e0, 10e23)
+    plt.ylim(10e-20, 10e6)
     plt.xlabel("h")
     # ax.gca().invert_xaxis()
     plt.title("EX. 2.: errors")

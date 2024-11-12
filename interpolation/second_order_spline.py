@@ -51,7 +51,7 @@ def _create_quadratic_spline_mat(x, delta):
     return np.array(mat)
 
 
-def quadratic_spline(x, f, delta):
+def quadratic_spline(x, f, delta, interval = INTERVAL):
     '''
     Perform piecewise interpolation of the runge function, given a specific sample
     with a polynomial of second order
@@ -82,8 +82,8 @@ def quadratic_spline(x, f, delta):
     # print(len(interp), len(polynomials))
     # print(polynomials)
 
-    arrx = np.linspace(*INTERVAL, num = 1_000)
-    arry = [polynomials[max(0, next(i for i, xbar in enumerate(sample) if xbar >= x) - 1)].evaluate(x) for x in arrx]
+    arrx = np.linspace(*interval, num = 1_000)
+    arry = [polynomials[max(0, next(i for i, xbar in enumerate(x) if xbar >= el) - 1)].evaluate(el) for el in arrx]
 
     return arrx, arry, interp
 
@@ -102,7 +102,6 @@ if __name__ == "__main__":
     fig.set_size_inches(20, 10, forward = True)
 
     sample = np.linspace(*INTERVAL, num = DELTA)
-    cheby = chebyshev_nodes(DELTA)
     f = [runge(x) for x in sample]
     print(sample)
     arrx, arry, interp = quadratic_spline(sample, f, DELTA)

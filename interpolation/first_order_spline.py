@@ -19,7 +19,7 @@ DELTA = 11
 colors = [(.5, .1, .8), (.5, .8, .1), (.8, .1, .5)]
 
 
-def linear_spline(x, f, delta = DELTA):
+def linear_spline(x, f, delta = DELTA, interval = INTERVAL):
     '''
     Perform a piecewise interpolation given points with coordinate x, f
 
@@ -41,11 +41,11 @@ def linear_spline(x, f, delta = DELTA):
     # print(interp)
 
     # Creating polynomial for every interval
-    polynomials = [Polynomial(interp[i:i + 2]) for i in range(0, len(interp) - 2, 2)]
-    # print(len(polynomials))
+    polynomials = [Polynomial(interp[i:i + 2]) for i in range(0, len(interp), 2)]
+    # print(len(interp), len(polynomials))
 
-    arrx = np.linspace(*INTERVAL, num = 1_000)
-    arry = [polynomials[min(max(next(i for i, xbar in enumerate(sample) if xbar >= x) - 1, 0), delta - 3)].evaluate(x) for x in arrx]
+    arrx = np.linspace(*interval, num = 1_000)
+    arry = [polynomials[max(0, next(i for i, xbar in enumerate(x) if xbar >= el) - 1)].evaluate(el) for el in arrx]
     # print(data)
     # exit()
 

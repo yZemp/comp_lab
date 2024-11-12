@@ -19,7 +19,7 @@ DELTA = 11
 colors = [(.5, .1, .8), (.5, .8, .1), (.8, .1, .5)]
 
 
-def spline(x, f):
+def linear_spline(x, f, delta = DELTA):
     '''
     Perform a piecewise interpolation given points with coordinate x, f
 
@@ -40,38 +40,23 @@ def spline(x, f):
     interp, _, _ = solve_linear_system(mat, f_system)
     # print(interp)
 
-    return interp
-
-
-def linear_spline(sample, label, delta):
-    '''
-    Perform piecewise interpolation of the runge function, given a specific sample
-    '''
-
-    f = [runge(x) for x in sample]
-    interp = spline(sample, f)
     # Creating polynomial for every interval
     polynomials = [Polynomial(interp[i:i + 2]) for i in range(0, len(interp) - 2, 2)]
     # print(len(polynomials))
 
     arrx = np.linspace(*INTERVAL, num = 1_000)
-    data = [polynomials[min(max(next(i for i, xbar in enumerate(sample) if xbar >= x) - 1, 0), delta - 3)].evaluate(x) for x in arrx]
-    # data = [max(next(i for i, xbar in enumerate(sample) if xbar >= x) - 1, 0) for x in arrx]
+    arry = [polynomials[min(max(next(i for i, xbar in enumerate(sample) if xbar >= x) - 1, 0), delta - 3)].evaluate(x) for x in arrx]
     # print(data)
     # exit()
 
-    return sample, arrx, data, f
-
+    return arrx, arry, interp
 
 
 if __name__ == "__main__":
     '''
     Perform a piecewise interpolation.
     '''
-
-    # TODO: Unsure how to generate the interval
-    # intervals = np.linspace(*INTERVAL, num = int((INTERVAL[1] - INTERVAL[0]) / DELTA))
-
+    
     # Uniform sample
 
     fig, ax = plt.subplots(1)
@@ -84,12 +69,14 @@ if __name__ == "__main__":
     start = 6
     end = 50
 
+
     # Showing the convergence
     for i in np.geomspace(start, end, num = 10):
         n = int(i)
         # print(n)
-        uniform = np.linspace(*INTERVAL, num = n)
-        sample, arrx, data, f = linear_spline(uniform, "Uniform", n)
+        sample = np.linspace(*INTERVAL, num = n)
+        f = [runge(x) for x in sample]
+        arrx, data, interp = linear_spline(sample, f, n)
     
         if n == start: ax.plot(arrx, runge(arrx), c = (.3, .3, .3), alpha = .1, linewidth = 10, label = "Runge function")
         ax.plot(arrx, data, color = (.1 * n / 5, 1 - .2 * n / 10, .8), alpha = 1, label = f"Spline {len(sample)}")

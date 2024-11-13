@@ -44,7 +44,7 @@ if __name__ == "__main__":
 
     arrx = np.linspace(*INTERVAL, 1_000)
     for ax in axes:
-        ax.plot(arrx, runge(arrx), c = (.3, .3, .3), alpha = .1, linewidth = 10, label = "Runge function")
+        ax.plot(arrx, runge(arrx), color = (.3, .3, .3), alpha = .1, linewidth = 10, label = "Runge function")
 
     plt.legend()
     plt.savefig(f"interp_graphs/ex3_linear")
@@ -62,7 +62,7 @@ if __name__ == "__main__":
 
     arrx = np.linspace(*INTERVAL, 1_000)
     for ax in axes:
-        ax.plot(arrx, runge(arrx), c = (.3, .3, .3), alpha = .1, linewidth = 10, label = "Runge function")
+        ax.plot(arrx, runge(arrx), color = (.3, .3, .3), alpha = .1, linewidth = 10, label = "Runge function")
 
     plt.legend()
     plt.savefig(f"interp_graphs/ex3_quadratic")

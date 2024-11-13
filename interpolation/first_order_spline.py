@@ -5,8 +5,6 @@ import matplotlib.pyplot as plt
 import sys
 sys.path.append("..")
 from matrices.matrix_utils import solve_linear_system
-from interp_direct_monomial import interp_simple
-from ex_1 import interp_newton
 
 from Polynomial_classes import Polynomial
 from my_interplib import *

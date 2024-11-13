@@ -33,7 +33,7 @@ def main(sample, label):
     fig, ax = plt.subplots(1)
 
     ax.scatter(sample, f, color = (.1, .1, .1), label = "Data sample", s = 70, marker = "x")
-    ax.plot(arrx, runge(arrx), c = colors[0], label = "Runge function")
+    ax.plot(arrx, runge(arrx), color = (.3, .3, .3), alpha = .1, linewidth = 10, label = "Runge function")
     ax.plot(arrx, data_simple, c = colors[1], label = "Simple interpolation")
     ax.plot(arrx, data_newton, c = colors[2], label = "Newton interpolation")
 

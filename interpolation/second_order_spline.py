@@ -5,8 +5,6 @@ import matplotlib.pyplot as plt
 import sys
 sys.path.append("..")
 from matrices.matrix_utils import solve_linear_system
-from interp_direct_monomial import interp_simple
-from ex_1 import interp_newton
 from ex_2 import chebyshev_nodes
 
 from Polynomial_classes import Polynomial
@@ -68,8 +66,8 @@ def quadratic_spline(x, f, delta, interval = INTERVAL):
     print(mat, "\n", f_system)
 
     # Finding array of a_i, b_i, c_i
-    interp = sp.linalg.solve(mat, f_system)
-    # interp, _, _ = solve_linear_system(mat, f_system)
+    # interp = sp.linalg.solve(mat, f_system)
+    interp, _, _ = solve_linear_system(mat, f_system)
     print("Interp:\t", interp)
 
 

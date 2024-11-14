@@ -76,8 +76,8 @@ def get_inverse(mat):
     Returns inverse of the NxN matrix mat
     '''
     # Identity
-    id = np.array([[1. if i == j else 0. for j in range(len(mat))] for i in range(len(mat))], dtype = float)
-    inverse = np.zeros_like(mat, dtype = float)
+    id = np.array([[1. if i == j else 0. for j in range(len(mat))] for i in range(len(mat))], dtype = complex)
+    inverse = np.zeros_like(mat, dtype = complex)
 
     # mat, id = _to_upp_triangular(mat, id)
     # print(new_mat, "\n", new_id, "\n")
@@ -102,7 +102,7 @@ def backward_sub(mat, b):
     if not len(mat) == len(mat[0]) == len(b): return -1
     n = len(b) - 1
 
-    x = np.zeros(n + 1)
+    x = np.zeros(n + 1, dtype = complex)
 
     # FORMULA FOR i-NTH ELEMENT OF X
     # x[i] = (b[i] - sum([mat[i][j] * x[j] for j in range(i + 1, n - 1)])) / mat[i][i]

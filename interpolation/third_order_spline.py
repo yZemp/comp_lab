@@ -32,7 +32,7 @@ colors = [(.5, .1, .8), (.5, .8, .1), (.8, .1, .5)]
 #     mat[row] = np.concatenate((mat[row, - K :], mat[row, : - K]))
 
 
-def _create_nth_spline_mat(x, delta, order, func = runge):
+def _create_cubic_spline_mat(x, delta, order = 3, func = runge):
     '''
     Creates and returns the matrix for quadratic spline coefficients
     as well as the vector of ys.
@@ -41,6 +41,7 @@ def _create_nth_spline_mat(x, delta, order, func = runge):
     '''
 
     if order < 1: raise ValueError("The fuck bro")
+    if order > 3: raise ValueError("Calm down")
 
     intervals = delta - 1
     n = order + 1 # Number of terms in every polynomial

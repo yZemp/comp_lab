@@ -18,12 +18,16 @@ np.set_printoptions(linewidth=np.inf)
 #######################################################################
 # VARS
 
-INTERVAL = (1, 4)
+INTERVAL = (-20, 20)
 # INTERVAL = (-50, 50)
-DELTA = 4
+DELTA = 50
 ORDER = 3
+LINE_WIDTH = 8
 colors = [(.5, .1, .8), (.5, .8, .1), (.8, .1, .5)]
 
+def FUNC(x):
+    return np.cos(x) * x * sp.stats.norm.pdf(x, 0, 5)
+    # return np.cos(x) * x
 
 
 # def _shift_row_right(mat, row, K):
@@ -32,7 +36,7 @@ colors = [(.5, .1, .8), (.5, .8, .1), (.8, .1, .5)]
 #     mat[row] = np.concatenate((mat[row, - K :], mat[row, : - K]))
 
 
-def _create_cubic_spline_mat(x, delta, order = 3, func = runge):
+def _create_cubic_spline_mat(x, delta, func, order = 3):
     '''
     Creates and returns the matrix for quadratic spline coefficients
     as well as the vector of ys.
@@ -41,7 +45,6 @@ def _create_cubic_spline_mat(x, delta, order = 3, func = runge):
     '''
 
     if order < 1: raise ValueError("The fuck bro")
-    if order > 3: raise ValueError("Calm down")
 
     intervals = delta - 1
     n = order + 1 # Number of terms in every polynomial
@@ -60,11 +63,11 @@ def _create_cubic_spline_mat(x, delta, order = 3, func = runge):
             print(i, k)
             
             # ALWAYS TWO ROWS (imposing to pass through two points)
-            mat[i * intervals][k + i * n] = np.power(x[i], k)
-            mat[i * intervals + 1][k + i * n] = np.power(x[i + 1], k)
+            mat[i * 2][k + i * n] = np.power(x[i], k)
+            mat[i * 2 + 1][k + i * n] = np.power(x[i + 1], k)
 
-            known_vector[i * intervals] = runge([x[i]])
-            known_vector[i * intervals + 1] = runge([x[i + 1]])
+            known_vector[i * 2] = func(np.array([x[i]]))
+            known_vector[i * 2 + 1] = func(np.array([x[i + 1]]))
 
             print(mat, "\n", known_vector)
             # exit()
@@ -72,33 +75,61 @@ def _create_cubic_spline_mat(x, delta, order = 3, func = runge):
 
     print("Fixing derivatives")
 
-    offset = len(x)
+    offset = intervals * 2
+    xi = sympy.symbols('x')
+    alpha = sympy.symbols('alpha')
     for i in range(1, intervals): # Loop over internal points
         for o in range(1, order): # Loop over orders of derivation
-            xi = sympy.symbols('x')
-            alpha = sympy.symbols('alpha')
             monomial = np.power(xi, alpha)
             deriv_o = sympy.diff(monomial, xi, o)
             
-            for k in range(n): # Loop over monomials
+            for k in range(0, n): # Loop over monomials
                 print(i, o, k)
                 
                 print(deriv_o)
                 deriv_o_value = deriv_o.subs({alpha: k, xi: x[i]})
                 
-                mat[i + offset + o][k] = deriv_o_value
-                mat[i + offset + o][k + n] = - deriv_o_value
+                mat[offset + (i - 1) * (order - 1) + o - 1][(i - 1) * n + k] = deriv_o_value
+                mat[offset + (i - 1) * (order - 1) + o - 1][(i - 1) * n + k + n] = - deriv_o_value
 
 
             print(mat, "\n", known_vector)
             # exit()
+
+    print("Fixing remaining dof")
+    
+    if order >= 2:
+
+        xi = sympy.symbols('x')
+        alpha = sympy.symbols('alpha')
+        for o in range(1, order): # Loop over orders of derivation
+            monomial = np.power(xi, alpha)
+            deriv_o = sympy.diff(monomial, xi, o)
             
+            for k in range(0, n): # Loop over monomials
+                deriv_o_value = deriv_o.subs({alpha: k, xi: x[-1]})
+                mat[- order + 1][- n + k] = deriv_o_value
+
+    if order >= 3:
+
+        xi = sympy.symbols('x')
+        alpha = sympy.symbols('alpha')
+        for o in range(1, order): # Loop over orders of derivation
+            monomial = np.power(xi, alpha)
+            deriv_o = sympy.diff(monomial, xi, o)
+            
+            for k in range(0, n): # Loop over monomials
+                deriv_o_value = deriv_o.subs({alpha: k, xi: x[0]})
+                mat[- order + 2][k] = deriv_o_value
+
+    print("FINAL FUCKING MATRIX (and vector):\n")
+    print(mat, "\n", known_vector)
 
 
     return mat, known_vector
 
 
-def nth_spline(x, f, delta, order = 3, interval = INTERVAL):
+def nth_spline(x, f, delta, order = 3, interval = INTERVAL, func = FUNC):
     '''
     Perform piecewise interpolation of the runge function, given a specific sample
     with a polynomial of nth order
@@ -108,15 +139,10 @@ def nth_spline(x, f, delta, order = 3, interval = INTERVAL):
     '''
 
     if order < 1: raise ValueError("Order should be at least one.")
+    # if order > 3: raise ValueError("Chill the fuck out bro.")
 
-    mat, f_system = _create_nth_spline_mat(x, delta, order, func = runge)
-
-    # Creating known array of f_i
-    # FIXME: Generalize f_system to nth order 
-    # Should be done, check if this works
-    # f_system = np.array([[f[i], f[i + 1]] + [0] * (order - 1) for i in range(len(f) - 1)]).flatten()
-    # print(len(f_system))
-    print(mat, "\n", f_system)
+    print(func.__name__)
+    mat, f_system = _create_cubic_spline_mat(x, delta, func = func, order = order)
 
     # Finding array of a_i, b_i, c_i
     interp = sp.linalg.solve(mat, f_system)
@@ -150,6 +176,8 @@ if __name__ == "__main__":
     '''
 
     order = ORDER
+    # myfunc = runge
+    myfunc = FUNC
 
     fig, ax = plt.subplots(1)
     # fig.suptitle("Uniform sampling")
@@ -157,16 +185,16 @@ if __name__ == "__main__":
     fig.set_size_inches(20, 10, forward = True)
 
     sample = np.linspace(*INTERVAL, num = DELTA)
-    f = [runge(x) for x in sample]
+    f = [myfunc(x) for x in sample]
     print(sample)
-    arrx, arry, interp = nth_spline(sample, f, DELTA, order)
+    arrx, arry, interp = nth_spline(sample, f, DELTA, order, func = myfunc)
     # sample = np.linspace(*INTERVAL, num = 12)
     # sample, arrx, data, f = main(sample, 12, splines[0], color_index = 1)
 
 
     ax.scatter(sample, f, color = (.1, .1, .1), marker = "x", label = "Samples")
     ax.plot(arrx, arry, color = colors[0], alpha = 1, label = f"Spline {len(sample)} order: {order}")
-    ax.plot(arrx, runge(arrx), c = (.3, .3, .3), alpha = .1, linewidth = 10, label = "Runge function")
+    ax.plot(arrx, myfunc(arrx), c = (.3, .3, .3), alpha = .1, linewidth = LINE_WIDTH, label = "True function")
     ax.legend()
 
 

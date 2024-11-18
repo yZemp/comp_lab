@@ -5,10 +5,10 @@ import matplotlib.pyplot as plt
 import sys
 sys.path.append("..")
 from matrices.matrix_utils import solve_linear_system
-from ex_2 import chebyshev_nodes
+from interpolation.ex_2 import chebyshev_nodes
 
-from Polynomial_classes import Polynomial
-from my_interplib import *
+from interpolation.Polynomial_classes import Polynomial
+from interpolation.my_interplib import *
 
 np.set_printoptions(linewidth=np.inf)
 
@@ -42,6 +42,7 @@ def _create_quadratic_spline_mat(x, delta):
             if i < len(mat[r]):
                 sign = 1 if i < (r + 1) else - 1
                 # print(sign, i, r)
+                # print(mat)
                 if i % 3 == 0: mat[r][i] = 0
                 if i % 3 == 1: mat[r][i] = sign
                 if i % 3 == 2: mat[r][i] = 2 * sign * x[(r + 1) // 3]
@@ -71,7 +72,7 @@ def quadratic_spline(x, f, delta, interval = INTERVAL):
     print("Interp:\t", interp)
 
 
-    print("Is the solution consistent:\t", np.allclose(np.dot(mat, interp), f_system))
+    # print("Is the solution consistent:\t", np.allclose(np.dot(mat, interp), f_system))
     # print(np.dot(mat, interp))
     # print(f_system)
 

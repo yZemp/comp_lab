@@ -3,9 +3,9 @@ import matplotlib.pyplot as plt
 
 import sys
 sys.path.append("~/Documents/Programming/comp_lab/")
-from interp_direct_monomial import interp_simple
-from ex_1 import interp_newton
-from my_interplib import *
+from interpolation.interp_direct_monomial import interp_simple
+from interpolation.ex_1 import interp_newton
+from interpolation.my_interplib import *
 
 #######################################################################
 # VARS

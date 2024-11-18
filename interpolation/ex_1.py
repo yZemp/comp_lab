@@ -1,11 +1,12 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-import sys
-sys.path.append("~/Documents/Programming/comp_lab/")
+import sys, os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '')))
+sys.path.append("../")
 
-from Polynomial_classes import Newton_polynomial, Newton_interpolator
-from interp_direct_monomial import interp_simple
+from interpolation.Polynomial_classes import Newton_polynomial, Newton_interpolator
+from interpolation.interp_direct_monomial import interp_simple
 
 # Direct approach using Newton polynomials
 

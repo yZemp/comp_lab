@@ -209,9 +209,9 @@ def converg_study():
 
 if __name__ == "__main__":
     # test_power_method_1()
-    test_power_method_2()
+    # test_power_method_2()
     # test_power_method_3()
     # test_power_method_all_1()
-    # test_power_method_all_2()
-    test_inverse_power_method_1()
-    converg_study()
+    test_power_method_all_2()
+    # test_inverse_power_method_1()
+    # converg_study()

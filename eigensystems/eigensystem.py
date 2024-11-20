@@ -44,7 +44,7 @@ def power_method(mat, N = N_MAX, return_eigenvector = False):
     else: return approx
 
 
-def power_method_all(mat, N = N_MAX):
+def _power_method_all(mat, N = N_MAX):
     '''
     Finds eigensystem of a matrix using deflation
     '''
@@ -64,6 +64,22 @@ def power_method_all(mat, N = N_MAX):
 
     return eigenvalues, eigenvectors
 
+def power_method_all(mat, N = N_MAX):
+    '''
+    Wrapper for _power_method_all
+    Finds eigensystem of a matrix using deflation, shifting mat by a scalar.
+    This way, we can make every eigenvalue positive without changing eigenvectors.
+    Then we can shift the spectrum back
+    '''
+
+    first_eigenval = power_method(mat, N)
+    shifted_mat = mat + 2 * first_eigenval * np.identity(len(mat))
+    print("First eigenvalue:\t", first_eigenval)
+    print(shifted_mat)
+    shifted_eigenvalues, eigenvectors = _power_method_all(shifted_mat, N)
+    eigenvalues = shifted_eigenvalues - 2 * first_eigenval
+
+    return eigenvalues, eigenvectors
 
 def inverse_power_method(mat, N = N_MAX, return_eigenvector = False, shifted = True):
     '''

@@ -5,13 +5,9 @@ import sympy
 
 import sys
 sys.path.append("..")
-from matrices.matrix_utils import solve_linear_system
-from interp_direct_monomial import interp_simple
-from ex_1 import interp_newton
-from ex_2 import chebyshev_nodes
 
-from Polynomial_classes import Polynomial
-from my_interplib import *
+from .Polynomial_classes import Polynomial
+from .my_interplib import *
 
 np.set_printoptions(linewidth=np.inf)
 
@@ -20,7 +16,7 @@ np.set_printoptions(linewidth=np.inf)
 
 INTERVAL = (-20, 20)
 # INTERVAL = (-50, 50)
-DELTA = 50
+DELTA = 30
 ORDER = 3
 LINE_WIDTH = 8
 colors = [(.5, .1, .8), (.5, .8, .1), (.8, .1, .5)]
@@ -36,15 +32,13 @@ def FUNC(x):
 #     mat[row] = np.concatenate((mat[row, - K :], mat[row, : - K]))
 
 
-def _create_cubic_spline_mat(x, delta, func, order = 3):
+def _create_cubic_spline_mat(x, f, delta, order = 3):
     '''
     Creates and returns the matrix for quadratic spline coefficients
     as well as the vector of ys.
     
     delta = number of sample points (including extrema)
     '''
-
-    if order < 1: raise ValueError("The fuck bro")
 
     intervals = delta - 1
     n = order + 1 # Number of terms in every polynomial
@@ -53,23 +47,23 @@ def _create_cubic_spline_mat(x, delta, func, order = 3):
     print("Order:\t", order)
 
     # Init mat and known_vector
-    mat = np.zeros((n * intervals, n * intervals))
-    known_vector = np.zeros(n * intervals)
+    mat = np.zeros((n * intervals, n * intervals), dtype = complex)
+    known_vector = np.zeros((n * intervals), dtype = complex)
 
     print("Fixing passage through points")
 
     for i in range(intervals): # Loop over intervals
         for k in range(n): # Loop over number of terms in polynomial
-            print(i, k)
+            # print(i, k)
             
             # ALWAYS TWO ROWS (imposing to pass through two points)
             mat[i * 2][k + i * n] = np.power(x[i], k)
             mat[i * 2 + 1][k + i * n] = np.power(x[i + 1], k)
 
-            known_vector[i * 2] = func(np.array([x[i]]))
-            known_vector[i * 2 + 1] = func(np.array([x[i + 1]]))
+            known_vector[i * 2] = f[i]
+            known_vector[i * 2 + 1] = f[i + 1]
 
-            print(mat, "\n", known_vector)
+            # print(mat, "\n", known_vector)
             # exit()
 
 
@@ -84,16 +78,16 @@ def _create_cubic_spline_mat(x, delta, func, order = 3):
             deriv_o = sympy.diff(monomial, xi, o)
             
             for k in range(0, n): # Loop over monomials
-                print(i, o, k)
+                # print(i, o, k)
                 
-                print(deriv_o)
+                # print(deriv_o)
                 deriv_o_value = deriv_o.subs({alpha: k, xi: x[i]})
                 
                 mat[offset + (i - 1) * (order - 1) + o - 1][(i - 1) * n + k] = deriv_o_value
                 mat[offset + (i - 1) * (order - 1) + o - 1][(i - 1) * n + k + n] = - deriv_o_value
 
 
-            print(mat, "\n", known_vector)
+            # print(mat, "\n", known_vector)
             # exit()
 
     print("Fixing remaining dof")
@@ -122,14 +116,15 @@ def _create_cubic_spline_mat(x, delta, func, order = 3):
                 deriv_o_value = deriv_o.subs({alpha: k, xi: x[0]})
                 mat[- order + 2][k] = deriv_o_value
 
-    print("FINAL FUCKING MATRIX (and vector):\n")
-    print(mat, "\n", known_vector)
+
+    # print("FINAL FUCKING MATRIX (and vector):\n")
+    # print(mat, "\n", known_vector)
 
 
     return mat, known_vector
 
 
-def nth_spline(x, f, delta, order = 3, interval = INTERVAL, func = FUNC):
+def nth_spline(x, f, delta, order = 3, interval = INTERVAL):
     '''
     Perform piecewise interpolation of the runge function, given a specific sample
     with a polynomial of nth order
@@ -139,15 +134,14 @@ def nth_spline(x, f, delta, order = 3, interval = INTERVAL, func = FUNC):
     '''
 
     if order < 1: raise ValueError("Order should be at least one.")
-    # if order > 3: raise ValueError("Chill the fuck out bro.")
+    if order > 3: raise ValueError("Chill the fuck out bro.")
 
-    print(func.__name__)
-    mat, f_system = _create_cubic_spline_mat(x, delta, func = func, order = order)
+    mat, f_system = _create_cubic_spline_mat(x, f, delta, order = order)
 
     # Finding array of a_i, b_i, c_i
     interp = sp.linalg.solve(mat, f_system)
     # interp, _, _ = solve_linear_system(mat, f_system)
-    print("Interp:\t", interp)
+    # print("Interp:\t", interp)
 
 
     print("Is the solution consistent:\t", np.allclose(np.dot(mat, interp), f_system))
@@ -155,8 +149,6 @@ def nth_spline(x, f, delta, order = 3, interval = INTERVAL, func = FUNC):
     # print(f_system)
 
     # Creating polynomial for every interval
-    # FIXME: Generalize f_system to nth order 
-    # Should be done, check if this works
     polynomials = [Polynomial(interp[i:i + order + 1]) for i in range(0, len(interp), order + 1)]
     # print(len(interp), len(polynomials))
     # print(polynomials)
@@ -187,7 +179,7 @@ if __name__ == "__main__":
     sample = np.linspace(*INTERVAL, num = DELTA)
     f = [myfunc(x) for x in sample]
     print(sample)
-    arrx, arry, interp = nth_spline(sample, f, DELTA, order, func = myfunc)
+    arrx, arry, interp = nth_spline(sample, f, DELTA, order)
     # sample = np.linspace(*INTERVAL, num = 12)
     # sample, arrx, data, f = main(sample, 12, splines[0], color_index = 1)
 

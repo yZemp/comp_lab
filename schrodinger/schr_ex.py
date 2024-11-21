@@ -32,7 +32,7 @@ def _colormap(i, norm, third = .3):
 
 def ex_1(potential, label = "", number = 4):
 
-    eigenvals, eigenvecs = init(N, potential, A, B)
+    eigenvals, eigenvecs = init(N, potential, A, B, m, L, dx, N_MAX)
     pdfs = np.power(abs(eigenvecs), 2)
 
     arri = [i / N for i in range(N)]
@@ -40,8 +40,6 @@ def ex_1(potential, label = "", number = 4):
     plt.figure(figsize = (20, 10))
 
     for i, arr in enumerate(pdfs):
-        # print(arri, np.abs(arr))
-        # if i % 5 != 0 or i >= 10: continue
         if i > number: continue
         plt.scatter(arri, eigenvals[i] + m * L * arr, color = _colormap(i, number), alpha = .8)
         x, y, _ = nth_spline(arri, eigenvals[i] + m * L * arr, N, order = 3, interval = (0, arri[-1]))
@@ -59,17 +57,17 @@ def ex_1(potential, label = "", number = 4):
 
 def ex_2(potential, label = "", number = 4):
 
-    eigenvals, eigenvecs = init(N, potential, A, B)
+    eigenvals, eigenvecs = init(N, potential, A, B, m, L, dx, N_MAX)
+    print(eigenvecs)
 
     arri = [i / N for i in range(N)]
 
     plt.figure(figsize = (20, 10))
 
     for i, arr in enumerate(eigenvecs):
-        # if i % 5 != 0 or i >= 10: continue
         if i > number: continue
         plt.scatter(arri, arr, color = _colormap(i, number), alpha = .8)
-        x, y, _ = nth_spline(arri,arr, N, order = 3, interval = (0, arri[-1]))
+        x, y, _ = nth_spline(arri, arr, N, order = 3, interval = (0, arri[-1]))
         plt.plot(x, y, color = _colormap(i, number), label = f"Eigenstate {eigenvals[i]}")
 
     plt.title("First eigenstates of the system")
@@ -114,6 +112,3 @@ if __name__ == "__main__":
     # ex_1(potential)
     ex_2(potential, "well")
     ex_2(inv_potential, "wall")
-
-
-    

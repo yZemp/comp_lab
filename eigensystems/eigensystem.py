@@ -76,7 +76,7 @@ def power_method_all(mat, N = N_MAX):
 
     first_eigenval = power_method(mat, N)
     shifted_mat = mat + 2 * first_eigenval * np.identity(len(mat))
-    print("First eigenvalue:\t", first_eigenval)
+    # print("Biggest eigenvalue:\t", first_eigenval)
     # print(shifted_mat)
     shifted_eigenvalues, eigenvectors = _power_method_all(shifted_mat, N)
     eigenvalues = shifted_eigenvalues - 2 * first_eigenval

@@ -16,14 +16,6 @@ np.set_printoptions(linewidth=np.inf)
 # VARS
 
 N_MAX = 5_000
-A = 0.
-B = 0.
-N = 64
-L = 1
-m = 8 / L
-dx = L / N
-V0_DEFAULT = 10.
-POTENTIAL = Potential_simple([0, L], V0 = - V0_DEFAULT)
 
 def _cround(z, threshold = 10e-8):
     if abs(z.imag) < threshold:
@@ -36,20 +28,20 @@ def init_K(n, A, B):
     K[-1][0] = B
     return K 
 
-def init_V(n, potential):
+def init_V(n, potential, dx):
     V = np.zeros((n, n))
     for i in range(0, len(V)):
         V[i][i] = potential(i * dx)
     return V
 
-def init(N: int = N, potential: Callable = POTENTIAL, A: float = A, B: float = B):
+def init(N: int, potential: Callable, A: float, B: float, m: float, L: float, dx: float, n_max: int = N_MAX):
     K = init_K(N, A, B)
-    V = init_V(N, potential)
+    V = init_V(N, potential, dx)
     print(K, "\n\n", V)
 
     bigmat = - (np.power(N, 2) / (2 * m * L)) * K + V * L
 
-    eigenvals, eigenvecs = power_method_all(bigmat, N_MAX)
+    eigenvals, eigenvecs = power_method_all(bigmat, n_max)
     eigenvals = np.array([_cround(z) for z in eigenvals]) / L
     eigenvals, eigenvecs = map(np.array, zip(*sorted(zip(eigenvals, eigenvecs), reverse = False)))
 

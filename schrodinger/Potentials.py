@@ -24,7 +24,7 @@ class Potential_simple(Potential):
     Simple is meant in the mathmatical sense of a simple function,
     defined by constants over descrete integrals.
     This kwargs is thought to be V0, V1, V2, ...
-    and args is thought to be [a, b, c, d, ...] the interval of definition (with limits on + and - inf)
+    and args is thought to be [a, b, c, d, ...] the interval of definition (else is 0)
     '''
     def __init__(self, args, **kwargs):
         def func(x):

@@ -53,6 +53,8 @@ def _power_method_all(mat, N = N_MAX):
     eigenvectors = []
     current_mat = np.copy(mat)
 
+    print("Calculating eigenvalues...")
+
     for _ in range(len(mat)):
 
         eigenval, eigenvec = power_method(current_mat, N, return_eigenvector = True)
@@ -75,7 +77,7 @@ def power_method_all(mat, N = N_MAX):
     first_eigenval = power_method(mat, N)
     shifted_mat = mat + 2 * first_eigenval * np.identity(len(mat))
     print("First eigenvalue:\t", first_eigenval)
-    print(shifted_mat)
+    # print(shifted_mat)
     shifted_eigenvalues, eigenvectors = _power_method_all(shifted_mat, N)
     eigenvalues = shifted_eigenvalues - 2 * first_eigenval
 

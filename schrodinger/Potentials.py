@@ -41,6 +41,8 @@ class Potential_simple(Potential):
                 if a <= x < b:
                     return kwargs.get(f"V{i}", 0)
 
+            return 0.
+        
         super().__init__(func)
 
 

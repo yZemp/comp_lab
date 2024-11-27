@@ -3,14 +3,14 @@ import sys
 import matplotlib.pyplot as plt
 import argparse
 
-from schr import init
+from schr_1D import schr_solve
 from Potentials import Potential_simple
 from interpolation.nth_order_spline import nth_spline
 
 #######################################################################
 # VARS
 
-N_MAX = 2_000
+N_MAX = 10_000
 colors = [(.5, .1, .8), (.5, .8, .1), (.8, .1, .5)]
 COLOR_SHIFT_SCALE = 1
 SEPARATOR = .2
@@ -32,7 +32,7 @@ def _colormap(i, norm, third = .3):
 
 def ex_1(potential, label = "", number = 4):
 
-    eigenvals, eigenvecs = init(N, potential, A, B, m, L, dx, N_MAX)
+    eigenvals, eigenvecs = schr_solve(N, potential, A, B, m, L, dx, N_MAX)
     pdfs = np.power(abs(eigenvecs), 2)
 
     arri = [i / N for i in range(N)]
@@ -57,8 +57,7 @@ def ex_1(potential, label = "", number = 4):
 
 def ex_2(potential, label = "", number = 4):
 
-    eigenvals, eigenvecs = init(N, potential, A, B, m, L, dx, N_MAX)
-    print(eigenvecs)
+    eigenvals, eigenvecs = schr_solve(N, potential, A, B, m, L, dx, N_MAX)
 
     arri = [i / N for i in range(N)]
 
@@ -76,6 +75,47 @@ def ex_2(potential, label = "", number = 4):
     plt.savefig(f"schr_graphs/eigenstates_{label}.png")
     plt.show()
 
+
+def ex_4(potentials, label = ""):
+
+    arri = [i / N for i in range(N)]
+    plt.figure(figsize = (20, 10))
+
+    for i, potential in enumerate(potentials):
+        eigenvals, eigenvecs = schr_solve(N, potential, A, B, m, L, dx, 2_000)
+
+        plt.scatter(arri, eigenvecs[0], color = colors[i], alpha = .8)
+        x, y, _ = nth_spline(arri, eigenvecs[0], N, order = 3, interval = (0, arri[-1]))
+        plt.plot(x, y, color = colors[i], label = f"Eigenstate {eigenvals[0]}")
+
+    plt.title("First eigenstates of the system (varying potential)")
+
+    plt.legend()
+    plt.savefig(f"schr_graphs/eigenstates_{label}.png")
+    plt.show()
+
+
+def ex_5(potential, label = ""):
+
+    fig, axes = plt.subplots(3)
+
+    for i, N in enumerate([16, 32, 64]):
+        arri = [i / N for i in range(N)]
+        eigenvals, eigenvecs = schr_solve(N, potential, A, B, m, L, dx, 2_000)
+
+        for j in [0, 3, 7]:
+            axes[i].scatter(arri, eigenvecs[j], color = colors[i], alpha = .8)
+            x, y, _ = nth_spline(arri, eigenvecs[j], N, order = 3, interval = (0, arri[-1]))
+            axes[i].plot(x, y, color = colors[i], label = f"Eigenstate {eigenvals[j]}")
+
+        axes[i].legend()
+    
+    fig.set_size_inches((20, 10), forward = True)
+
+    plt.suptitle("Eigenstates varying lattice spacing")
+
+    plt.savefig(f"schr_graphs/eigenstates_{label}.png")
+    plt.show()
 
 
 if __name__ == "__main__":
@@ -106,9 +146,12 @@ if __name__ == "__main__":
     print("Initiated parameters:\n", N, A, B, L, m, dx)
 
 
-    potential = Potential_simple([0, L], V0 = args.V0)
-    inv_potential = Potential_simple([0, L], V0 = - args.V0)
+    potential = Potential_simple([L / 4, (3 / 4) * L], V0 = args.V0)
+    inv_potential = Potential_simple([L / 4, (3 / 4) * L], V0 = - args.V0)
+    potentials = [Potential_simple([L / 4, (3 / 4) * L], V0 = el) for el in [10, 40, 80]]
 
-    # ex_1(potential)
-    ex_2(potential, "well")
-    ex_2(inv_potential, "wall")
+    # ex_1(potential, "well")
+    # ex_2(potential, "well")
+    # ex_2(inv_potential, "wall")
+    # ex_4(potentials, "various")
+    ex_5(potential, "lattice")

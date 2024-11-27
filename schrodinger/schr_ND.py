@@ -6,7 +6,6 @@ import sys
 
 sys.path.append("..")
 from eigensystems.eigensystem import power_method_all
-from schrodinger.Potentials import Potential, Potential_simple
 from typing import Callable
 
 np.set_printoptions(linewidth=np.inf)
@@ -22,6 +21,9 @@ def _cround(z, threshold = 10e-8):
         return z.real
     return z
 
+def ndim_laplacian(x, spacings):
+    pass
+
 def init_K(n, A, B):
     K = np.diag([- 2] * n) + np.diag([1] * (n - 1), 1) + np.diag([1] * (n - 1), - 1)
     K[0][-1] = A
@@ -34,7 +36,18 @@ def init_V(n, potential, dx):
         V[i][i] = potential(i * dx)
     return V
 
-def init(N: int, potential: Callable, A: float, B: float, m: float, L: float, dx: float, n_max: int = N_MAX):
+def init(potential: Callable, A: float, B: float, m: float, L: float, spacings: list[float], n_max: int = N_MAX):
+    '''
+    potential: potential function to assume in schr equation
+    A, B: boundary conditions
+    m: mass of the particle
+    L: Length of the interval (starting at 0)
+    spacings: precision of approx on various axis. usually len(lat_spacing) == 1, 2, 3.
+        Think about it as dx, dy, dz length
+        Dimension of the problem is len(spacings) 
+    n_max = max iteration of the eigensolver
+    '''
+    
     K = init_K(N, A, B)
     V = init_V(N, potential, dx)
     print(K, "\n\n", V)

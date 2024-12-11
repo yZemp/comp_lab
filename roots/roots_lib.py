@@ -1,5 +1,9 @@
 import numpy as np
 import matplotlib.pyplot as plt
+from typing import Type
+from interpolation.Polynomial_classes import Polynomial
+from eigensystems.eigensystem import power_method_all
+from useful_lib import _cround
 
 MAX_ITER = 1e6
 PREC = 1e-9
@@ -47,7 +51,6 @@ def secant(x0, x1, f, prec = PREC, max_iter = MAX_ITER, _i = 0):
         the root exists
         the function is derivable
 
-    NOTE: A good initial guess is had after some bisection iterations
     This function relies on the backward finite difference to approximate the first derivative
     '''
 
@@ -60,18 +63,28 @@ def secant(x0, x1, f, prec = PREC, max_iter = MAX_ITER, _i = 0):
     return secant(x1, x2, f, prec, max_iter, _i)
 
 
+def all_roots(poly: Type[Polynomial], N = MAX_ITER):
+    '''
+    Given a polynomial finds all roots using an eigensolver
+    '''
 
+    print("Polynomial:\t", poly)
+    poly_bar = Polynomial(poly.coefficients / poly.coefficients[-1])
 
-    
+    C = np.diag([1.] * (poly_bar.order - 2), 1)
+    C[- 1] = [- poly_bar.coefficients[i] for i in range(poly_bar.order - 1)]
+    # print(C)
 
+    eigval, eigvec = power_method_all(C, N = int(N))
+    eigval = np.sort([_cround(el) for el in eigval])
 
+    true_eigval = np.sort(np.linalg.eigvals(C))
 
+    return eigval, true_eigval    
 
 
 
 
 if __name__ == "__main__":
-    def f(x): return .5 + x - np.power(x, 2)
-
-    root = bisect(.8, 1.6, f)
-
+    poly = Polynomial([0, -8, -4, -4, -1, 1])
+    all_roots(poly)

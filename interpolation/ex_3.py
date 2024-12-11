@@ -9,7 +9,7 @@ from ex_2 import chebyshev_nodes
 from first_order_spline import linear_spline
 from second_order_spline import quadratic_spline
 
-from Polynomial_classes import Polynomial
+from interpolation.Polynomial_classes import Polynomial
 from my_interplib import *
 
 np.set_printoptions(linewidth=np.inf)

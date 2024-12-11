@@ -6,7 +6,7 @@ import sys
 sys.path.append("..")
 from matrices.matrix_utils import solve_linear_system
 
-from Polynomial_classes import Polynomial
+from interpolation.Polynomial_classes import Polynomial
 from my_interplib import *
 
 #######################################################################

@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from roots_lib import bisect, newton_raphson, secant
+from roots_lib import bisect, newton_raphson, secant, all_roots
+from interpolation.Polynomial_classes import Polynomial
 
 colors = [(.5, .1, .8), (.5, .8, .1), (.8, .1, .5), (.1, .2, .9)]
 
@@ -226,6 +227,22 @@ def ex10_op():
     plt.savefig("roots_graphs/optional.png")
     plt.show()
 
+def ex11_leg():
+    coeff = np.array([-63, 0, 3465, 0, -30030, 0, 90090, 0, -109395, 0, 46189]) / 256
+    poly = Polynomial(coeff)
+    eigvals, teigvals = all_roots(poly, N = 10_000)
+    
+    print(eigvals, "\n", teigvals)
+    print("Close enough:\t", np.allclose(eigvals, teigvals))
+
+def ex11_her():
+    coeff = np.array([-120, 0, 720, 0, -480, 0, 64])
+    poly = Polynomial(coeff)
+    eigvals, teigvals = all_roots(poly, N = 10_000)
+    
+    print(eigvals, "\n", teigvals)
+    print("Close enough:\t", np.allclose(eigvals, teigvals))
+
 
 if __name__ == "__main__":
     starting_vals = [2.352837350, 2.352836327, 2.352836323]
@@ -236,4 +253,6 @@ if __name__ == "__main__":
     # ex10_2(False)
     # ex10_2(True)
     # ex10_3(starting_vals)
-    ex10_op()
+    # ex10_op()
+    ex11_leg()
+    ex11_her()
